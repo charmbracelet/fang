@@ -10,7 +10,8 @@ import (
 )
 
 func main() {
-	cmd := &cobra.Command{
+	var cmd *cobra.Command
+	cmd = &cobra.Command{
 		Use:   "example [args]",
 		Short: "A simple example program!",
 		Long: `A simple example program!
@@ -27,7 +28,9 @@ example --name=Carlos -a -s Becker -a
 example sub --async --foo=xyz --async arguments
 		`,
 		// Args: cobra.ArbitraryArgs,
-		Run: func(*cobra.Command, []string) {},
+		Run: func(*cobra.Command, []string) {
+			_ = cmd.Help()
+		},
 	}
 	var foo string
 	var bar int
