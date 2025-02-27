@@ -3,7 +3,7 @@ module github.com/charmbracelet/serpentine
 go 1.23
 
 require (
-	github.com/charmbracelet/colorprofile v0.2.1
+	github.com/charmbracelet/colorprofile v0.2.2
 	github.com/charmbracelet/lipgloss/v2 v2.0.0-alpha.2.0.20241122170046-8f4aab7ecfa3
 	github.com/charmbracelet/x/exp/golden v0.0.0-20240806155701-69247e0abc2a
 	github.com/muesli/mango-cobra v1.2.0
