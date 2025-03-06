@@ -2,21 +2,13 @@
 
 An experimental small library to make user friendly [cobra][] commands.
 
-<table>
-  <tr>
-    <td width="50%" rowspan="2">
-      <img src="./example/1.png" width="100%" alt="Example 1">
-    </td>
-    <td width="50%">
-      <img src="./example/2.png" width="100%" alt="Example 2">
-    </td>
-  </tr>
-  <tr>
-    <td width="50%">
-      <img src="./example/3.png" width="100%" alt="Example 3">
-    </td>
-  </tr>
-</table>
+<div align="center">
+  <img src="./example/1.png" width="49%" align="top" alt="Example 1">
+  <div style="display:inline-block; width:49%; vertical-align:top;">
+    <img src="./example/2.png" width="100%" alt="Example 2">
+    <img src="./example/3.png" width="100%" alt="Example 3">
+  </div>
+</div>
 
 ## Features
 
