@@ -2,17 +2,11 @@
 
 An experimental small library to make user friendly [cobra][] commands.
 
-<table>
-  <tr>
-    <td width="50%">
-      <img src="./example/1.svg" width="100%" alt="Example 1">
-    </td>
-    <td width="50%">
-      <img src="./example/2.svg" width="100%" alt="Example 2">
-      <img src="./example/3.svg" width="100%" alt="Example 3">
-    </td>
-  </tr>
-</table>
+<img src="./example/1.svg" width="100%" alt="Example 1">
+
+<p>
+  <img src="./example/2.svg" width="50%" alt="Example 2"><img src="./example/3.svg" width="50%" alt="Example 3">
+</p>
 
 ## Features
 
