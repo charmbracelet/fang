@@ -1,0 +1,7 @@
+version: 3
+tasks:
+  screenshots:
+    cmds:
+      - freeze -W 700 -H 800 --config full --output ./example/1.png --execute "./example/run -h"
+      - freeze -W 700 -H 400 --config full --output ./example/2.png --execute "./example/run -e"
+      - freeze -W 700 -H 400 --config full --output ./example/3.png --execute "./example/run --this-flag-doesnt-exist"

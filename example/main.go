@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"os"
 	"time"
 
@@ -10,6 +11,12 @@ import (
 )
 
 func main() {
+	var foo string
+	var bar int
+	var baz float64
+	var d time.Duration
+	var eerr bool
+
 	cmd := &cobra.Command{
 		Use:   "example [args]",
 		Short: "An example program!",
@@ -27,24 +34,26 @@ example --name=Carlos -a -s Becker -a
 example sub --async --foo=xyz --async arguments
 		`,
 
-		Run: func(c *cobra.Command, _ []string) {
+		RunE: func(c *cobra.Command, _ []string) error {
+			if eerr {
+				return errors.New("we have an error")
+			}
 			c.Println("Ran the root command!")
+			return nil
 		},
 	}
-	var foo string
-	var bar int
-	var baz float64
-	var d time.Duration
 	cmd.PersistentFlags().StringVarP(&foo, "surname", "s", "doe", "Your surname")
 	cmd.Flags().StringVar(&foo, "name", "john", "Your name")
 	cmd.Flags().DurationVar(&d, "duration", 0, "Time since your last commit")
 	cmd.Flags().IntVar(&bar, "age", 0, "Your age")
 	cmd.Flags().Float64Var(&baz, "idk", 0.0, "I don't know")
 	cmd.Flags().BoolP("async", "a", false, "Run async")
+	cmd.Flags().BoolVarP(&eerr, "error", "e", false, "Makes the program exit with error")
 
 	_ = cmd.Flags().MarkHidden("age")
 	_ = cmd.Flags().MarkHidden("duration")
 	_ = cmd.Flags().MarkHidden("idk")
+	_ = cmd.Flags().MarkHidden("error")
 
 	cmd.AddCommand(&cobra.Command{
 		Use:   "sub [command] [flags] [args]",

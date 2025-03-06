@@ -1,0 +1,3 @@
+#!/bin/sh
+go build -o ./example/bin ./example/main.go
+./example/bin $* || true
