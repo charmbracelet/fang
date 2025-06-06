@@ -7,6 +7,7 @@ import (
 	"runtime/debug"
 
 	"github.com/charmbracelet/colorprofile"
+	"github.com/charmbracelet/lipgloss/v2"
 	mango "github.com/muesli/mango-cobra"
 	"github.com/muesli/roff"
 	"github.com/spf13/cobra"
@@ -19,7 +20,7 @@ type settings struct {
 	manpages    bool
 	version     string
 	commit      string
-	theme       Theme
+	theme       *Theme
 }
 
 // Option changes serpentine settings.
@@ -42,7 +43,7 @@ func WithoutManpage() Option {
 // WithTheme sets the colorscheme.
 func WithTheme(theme Theme) Option {
 	return func(s *settings) {
-		s.theme = theme
+		s.theme = &theme
 	}
 }
 
@@ -65,13 +66,21 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 	opts := settings{
 		manpages:    true,
 		completions: true,
-		theme:       DefaultTheme,
 	}
 	for _, option := range options {
 		option(&opts)
 	}
 
-	styles := makeStyles(opts.theme)
+	if opts.theme == nil {
+		darkBg := lipgloss.HasDarkBackground(os.Stdin, os.Stderr)
+		if darkBg {
+			opts.theme = &DefaultThemeDark
+		} else {
+			opts.theme = &DefaultThemeLight
+		}
+	}
+
+	styles := makeStyles(*opts.theme)
 
 	root.SetHelpFunc(func(c *cobra.Command, _ []string) {
 		w := colorprofile.NewWriter(c.OutOrStdout(), os.Environ())

@@ -25,8 +25,8 @@ type Theme struct {
 	ErrorDetails [2]color.Color // 0=fg 1=flag
 }
 
-// DefaultTheme is the default colorscheme.
-var DefaultTheme = Theme{
+// DefaultThemeDark is the default colorscheme.
+var DefaultThemeDark = Theme{
 	Codeblock:    lipgloss.Color("#2F2E36"),
 	Title:        charmtone.Charple,
 	Comment:      lipgloss.Color("#747282"),
@@ -45,6 +45,29 @@ var DefaultTheme = Theme{
 	ErrorDetails: [2]color.Color{
 		charmtone.Ash,
 		charmtone.Julep,
+	},
+}
+
+// DefaultThemeDark is the default colorscheme.
+var DefaultThemeLight = Theme{
+	Codeblock:    charmtone.Salt,
+	Title:        charmtone.Malibu,
+	Comment:      charmtone.Squid,
+	Flag:         charmtone.Charcoal,
+	Argument:     charmtone.Charcoal,
+	Help:         charmtone.Charcoal,
+	Dash:         charmtone.Charcoal,
+	Default:      charmtone.Squid,
+	Program:      charmtone.Dolly,
+	Command:      charmtone.Charcoal,
+	QuotedString: lipgloss.Color("#00BC82"),
+	ErrorHeader: [2]color.Color{
+		charmtone.Butter,
+		charmtone.Cherry,
+	},
+	ErrorDetails: [2]color.Color{
+		charmtone.Charcoal,
+		lipgloss.Color("#00BC82"),
 	},
 }
 
