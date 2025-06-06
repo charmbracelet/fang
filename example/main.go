@@ -32,6 +32,9 @@ example --name=Carlos -a -s Becker -a
 
 # Run a subcommand with an argument:
 example sub --async --foo=xyz --async arguments
+
+# Run with a quoted string:
+example sub2 "quoted string"
 		`,
 
 		RunE: func(c *cobra.Command, _ []string) error {

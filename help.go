@@ -71,8 +71,7 @@ func writeError(w *colorprofile.Writer, styles Styles, err error) {
 	_, _ = fmt.Fprintln(w, lipgloss.JoinHorizontal(
 		lipgloss.Left,
 		styles.ErrorDetails.Render("Try"),
-		styles.Dash.UnsetBackground().Render("--"),
-		styles.Flag.UnsetBackground().UnsetPadding().Render("help"),
+		styles.ErrorDetailsFlag.Render("--help"),
 		styles.ErrorDetails.UnsetMargins().PaddingLeft(1).Render("for usage details."),
 	))
 	_, _ = fmt.Fprintln(w)
@@ -113,7 +112,7 @@ func use(c *cobra.Command, styles Styles) string {
 
 	u = strings.TrimSpace(u)
 
-	useLine := []string{styles.Program.Render(u)}
+	useLine := []string{styles.Command.Render(u)}
 	if hasCommands {
 		useLine = append(useLine, styles.Argument.Render("[command]"))
 	}
@@ -169,6 +168,7 @@ func evalExample(c *cobra.Command, line string, last bool, styles Styles) string
 
 	args := strings.Fields(line)
 	var nextIsFlag bool
+	var isQuotedString bool
 	for i, arg := range args {
 		if i == 0 {
 			args[i] = styles.Program.Render(arg)
@@ -177,6 +177,17 @@ func evalExample(c *cobra.Command, line string, last bool, styles Styles) string
 		if nextIsFlag {
 			args[i] = styles.Flag.Render(arg)
 			nextIsFlag = false
+			continue
+		}
+		if strings.HasPrefix(arg, `"`) {
+			isQuotedString = true
+		}
+		if isQuotedString {
+			args[i] = styles.QuotedString.Render(arg)
+			continue
+		}
+		if strings.HasSuffix(arg, `"`) {
+			isQuotedString = false
 			continue
 		}
 		var dashes string
@@ -251,9 +262,7 @@ func evalFlags(c *cobra.Command, styles Styles) (map[string]string, []string) {
 			help = lipgloss.JoinHorizontal(
 				lipgloss.Left,
 				help,
-				styles.Help.PaddingLeft(1).Render("("),
-				styles.Default.Render(f.DefValue),
-				styles.Help.Render(")"),
+				styles.Default.PaddingLeft(1).Render("("+f.DefValue+")"),
 			)
 		}
 		flags[key] = help

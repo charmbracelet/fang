@@ -5,6 +5,7 @@ go 1.23.0
 require (
 	github.com/charmbracelet/colorprofile v0.3.0
 	github.com/charmbracelet/lipgloss/v2 v2.0.0-beta.1
+	github.com/charmbracelet/x/exp/charmtone v0.0.0-20250603201427-c31516f43444
 	github.com/charmbracelet/x/exp/golden v0.0.0-20240806155701-69247e0abc2a
 	github.com/muesli/mango-cobra v1.2.0
 	github.com/muesli/roff v0.1.0
