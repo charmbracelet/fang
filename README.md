@@ -31,8 +31,7 @@ An experimental small library to make user friendly [cobra][] commands.
 
 ## Usage
 
-To use it, invoke `fang.Setup` passing your root `*cobra.Command` as
-argument, and then `Execute()` it:
+To use it, invoke `fang.Execute` passing your root `*cobra.Command`:
 
 ```go
 package main
