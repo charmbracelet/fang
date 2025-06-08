@@ -51,7 +51,7 @@ var DefaultThemeDark = Theme{
 // DefaultThemeDark is the default colorscheme.
 var DefaultThemeLight = Theme{
 	Codeblock:    charmtone.Salt,
-	Title:        charmtone.Malibu,
+	Title:        charmtone.Charple,
 	Comment:      charmtone.Squid,
 	Flag:         charmtone.Charcoal,
 	Argument:     charmtone.Charcoal,
