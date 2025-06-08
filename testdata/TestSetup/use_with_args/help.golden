@@ -3,17 +3,20 @@
        
   USAGE
 
-                                                         
-    simple [command] [args] [something-else] [--flags]   
-                                                         
-
+    simple [command] [args] [something-else] [--flags]
+          
+  EXAMPLES
+          
+      
+      
           
   COMMANDS
+          
     completion [command]  Generate the autocompletion script for the specified shell
     help [command]        Help about any command
-
        
   FLAGS
+       
     -h --help             Help for simple
     -v --version          Version for simple
 

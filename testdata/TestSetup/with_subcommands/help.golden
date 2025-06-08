@@ -3,18 +3,21 @@
        
   USAGE
 
-                                 
-    simple [command] [--flags]   
-                                 
-
+    simple [command] [--flags]
+          
+  EXAMPLES
+          
+      
+      
           
   COMMANDS
+          
     completion [command]  Generate the autocompletion script for the specified shell
     help [command]        Help about any command
     sub-cmd               A sub command
-
        
   FLAGS
+       
     -h --help             Help for simple
     -v --version          Version for simple
 

@@ -3,23 +3,25 @@
        
   USAGE
 
+    simple [command] [--flags]
+          
+  EXAMPLES
+          
                                                                    
-    simple [command] [--flags]                                     
-                                                                   
     # a comment about the usage                                    
     simple [some arguments]                                        
                                                                    
     # another comment                                              
     simple --string1=2 -s abc -b --bool1 --flag-not-found [args]   
                                                                    
-
           
   COMMANDS
+          
     completion [command]  Generate the autocompletion script for the specified shell
     help [command]        Help about any command
-
        
   FLAGS
+       
        --bool1            A bool flag
     -b --bool2            A bool flag
     -h --help             Help for simple

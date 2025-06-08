@@ -3,12 +3,15 @@
        
   USAGE
 
-                       
-    simple [--flags]   
-                       
-
+    simple [--flags]
+          
+  EXAMPLES
+          
+      
+      
        
   FLAGS
+       
     -h --help     Help for simple
     -v --version  Version for simple
 
