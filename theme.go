@@ -25,7 +25,7 @@ type Theme struct {
 	ErrorDetails [2]color.Color // 0=fg 1=flag
 }
 
-// DefaultThemeDark is the default dark colorscheme.
+// DefaultTheme is the default colorscheme.
 func DefaultTheme(isDark bool) Theme {
 	c := lipgloss.LightDark(isDark)
 	return Theme{
