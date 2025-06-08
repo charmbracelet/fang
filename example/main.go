@@ -20,9 +20,9 @@ func main() {
 	cmd := &cobra.Command{
 		Use:   "example [args]",
 		Short: "An example program!",
-		Long: `A pretty silly example program!
+		Long: `A little example program!
 
-It doesn’t really do anything, but that’s the point.`,
+It doesn’t really do anything, but that’s the point.™`,
 		Example: `
 # Run it:
 example
@@ -41,7 +41,7 @@ example sub2 "quoted string"
 			if eerr {
 				return errors.New("we have an error")
 			}
-			c.Println("Ran the root command!")
+			c.Println("You ran the root command. Now try --help.")
 			return nil
 		},
 	}
