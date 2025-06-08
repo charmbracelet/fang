@@ -1,4 +1,4 @@
-module github.com/charmbracelet/serpentine
+module github.com/charmbracelet/fang
 
 go 1.23.0
 

@@ -1,4 +1,4 @@
-# serpentine
+# Fang
 
 An experimental small library to make user friendly [cobra][] commands.
 
@@ -31,7 +31,7 @@ An experimental small library to make user friendly [cobra][] commands.
 
 ## Usage
 
-To use it, invoke `serpentine.Setup` passing your root `*cobra.Command` as
+To use it, invoke `fang.Setup` passing your root `*cobra.Command` as
 argument, and then `Execute()` it:
 
 ```go
@@ -40,7 +40,7 @@ package main
 import (
 	"os"
 
-	"github.com/charmbracelet/serpentine"
+	"github.com/charmbracelet/fang"
 	"github.com/spf13/cobra"
 )
 
@@ -49,7 +49,7 @@ func main() {
 		Use:   "example",
 		Short: "A simple example program!",
 	}
-	if err := serpentine.Execute(context.TODO(), cmd); err != nil {
+	if err := fang.Execute(context.TODO(), cmd); err != nil {
 		os.Exit(1)
 	}
 }

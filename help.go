@@ -1,4 +1,4 @@
-package serpentine
+package fang
 
 import (
 	"cmp"
@@ -41,7 +41,6 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
 	space := calculateSpace(cmdKeys, flagKeys)
 
 	if len(cmds) > 0 {
-		_, _ = fmt.Fprintln(w)
 		_, _ = fmt.Fprintln(w, styles.Title.Render("commands\n"))
 		for _, k := range cmdKeys {
 			_, _ = fmt.Fprintln(w, lipgloss.JoinHorizontal(
@@ -54,7 +53,6 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
 	}
 
 	if len(flags) > 0 {
-		_, _ = fmt.Fprintln(w)
 		_, _ = fmt.Fprintln(w, styles.Title.Render("flags\n"))
 		for _, k := range flagKeys {
 			_, _ = fmt.Fprintln(w, lipgloss.JoinHorizontal(
