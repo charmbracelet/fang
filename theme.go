@@ -25,7 +25,7 @@ type Theme struct {
 	ErrorDetails [2]color.Color // 0=fg 1=flag
 }
 
-// DefaultThemeDark is the default colorscheme.
+// DefaultThemeDark is the default dark colorscheme.
 var DefaultThemeDark = Theme{
 	Codeblock:    lipgloss.Color("#2F2E36"),
 	Title:        charmtone.Charple,
@@ -48,7 +48,7 @@ var DefaultThemeDark = Theme{
 	},
 }
 
-// DefaultThemeDark is the default colorscheme.
+// DefaultThemeLight is the default light colorscheme.
 var DefaultThemeLight = Theme{
 	Codeblock:    charmtone.Salt,
 	Title:        charmtone.Charple,
