@@ -73,12 +73,9 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 	}
 
 	if opts.theme == nil {
-		darkBg := lipgloss.HasDarkBackground(os.Stdin, os.Stderr)
-		if darkBg {
-			opts.theme = &DefaultThemeDark
-		} else {
-			opts.theme = &DefaultThemeLight
-		}
+		isDark := lipgloss.HasDarkBackground(os.Stdin, os.Stderr)
+		t := DefaultTheme(isDark)
+		opts.theme = &t
 	}
 
 	styles := makeStyles(*opts.theme)

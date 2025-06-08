@@ -26,49 +26,29 @@ type Theme struct {
 }
 
 // DefaultThemeDark is the default dark colorscheme.
-var DefaultThemeDark = Theme{
-	Codeblock:    lipgloss.Color("#2F2E36"),
-	Title:        charmtone.Charple,
-	Comment:      lipgloss.Color("#747282"),
-	Flag:         charmtone.Ash,
-	Argument:     charmtone.Ash,
-	Help:         charmtone.Ash,
-	Dash:         charmtone.Smoke,
-	Default:      lipgloss.Color("#747282"),
-	Program:      charmtone.Blush,
-	Command:      charmtone.Ash,
-	QuotedString: charmtone.Julep,
-	ErrorHeader: [2]color.Color{
-		charmtone.Butter,
-		charmtone.Cherry,
-	},
-	ErrorDetails: [2]color.Color{
-		charmtone.Ash,
-		charmtone.Julep,
-	},
-}
-
-// DefaultThemeLight is the default light colorscheme.
-var DefaultThemeLight = Theme{
-	Codeblock:    charmtone.Salt,
-	Title:        charmtone.Charple,
-	Comment:      charmtone.Squid,
-	Flag:         charmtone.Charcoal,
-	Argument:     charmtone.Charcoal,
-	Help:         charmtone.Charcoal,
-	Dash:         charmtone.Charcoal,
-	Default:      charmtone.Squid,
-	Program:      charmtone.Dolly,
-	Command:      charmtone.Charcoal,
-	QuotedString: lipgloss.Color("#00BC82"),
-	ErrorHeader: [2]color.Color{
-		charmtone.Butter,
-		charmtone.Cherry,
-	},
-	ErrorDetails: [2]color.Color{
-		charmtone.Charcoal,
-		lipgloss.Color("#00BC82"),
-	},
+func DefaultTheme(isDark bool) Theme {
+	c := lipgloss.LightDark(isDark)
+	return Theme{
+		Codeblock:    c(charmtone.Salt, lipgloss.Color("#2F2E36")),
+		Title:        charmtone.Charple,
+		Comment:      c(charmtone.Squid, lipgloss.Color("#747282")),
+		Flag:         c(charmtone.Charcoal, charmtone.Ash),
+		Argument:     c(charmtone.Charcoal, charmtone.Ash),
+		Help:         c(charmtone.Charcoal, charmtone.Ash),
+		Dash:         c(charmtone.Charcoal, charmtone.Smoke),
+		Default:      c(charmtone.Squid, lipgloss.Color("#747282")),
+		Program:      c(charmtone.Dolly, charmtone.Blush),
+		Command:      c(charmtone.Charcoal, charmtone.Ash),
+		QuotedString: c(lipgloss.Color("#00BC82"), charmtone.Julep),
+		ErrorHeader: [2]color.Color{
+			charmtone.Butter,
+			charmtone.Cherry,
+		},
+		ErrorDetails: [2]color.Color{
+			c(charmtone.Charcoal, charmtone.Ash),
+			c(lipgloss.Color("#00BC82"), charmtone.Julep),
+		},
+	}
 }
 
 // Styles represents all the styles used.
