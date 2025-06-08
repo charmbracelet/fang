@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/charmbracelet/serpentine"
+	"github.com/charmbracelet/fang"
 	"github.com/spf13/cobra"
 )
 
@@ -67,11 +67,11 @@ example sub2 "quoted string"
 	})
 
 	// This is where the magic happens.
-	if err := serpentine.Execute(
+	if err := fang.Execute(
 		context.Background(),
 		cmd,
-		serpentine.WithoutManpage(),
-		serpentine.WithoutCompletions(),
+		fang.WithoutManpage(),
+		fang.WithoutCompletions(),
 	); err != nil {
 		os.Exit(1)
 	}

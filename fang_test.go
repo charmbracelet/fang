@@ -1,11 +1,11 @@
-package serpentine_test
+package fang_test
 
 import (
 	"bytes"
 	"context"
 	"testing"
 
-	"github.com/charmbracelet/serpentine"
+	"github.com/charmbracelet/fang"
 	"github.com/charmbracelet/x/exp/golden"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/require"
@@ -31,7 +31,7 @@ func TestSetup(t *testing.T) {
 				t, cmd,
 				[]string{"man"},
 				assertNoError,
-				serpentine.WithoutManpage(),
+				fang.WithoutManpage(),
 			)
 		})
 	})
@@ -51,7 +51,7 @@ func TestSetup(t *testing.T) {
 			Args:  cobra.NoArgs,
 		}
 
-		exercise(t, cmd, serpentine.WithoutCompletions())
+		exercise(t, cmd, fang.WithoutCompletions())
 
 		t.Run("completion", func(t *testing.T) {
 			t.Skip("this fails when testing, but works as expected otherwise, no idea why yet")
@@ -59,7 +59,7 @@ func TestSetup(t *testing.T) {
 				t, cmd,
 				[]string{"completion"},
 				assertError,
-				serpentine.WithoutCompletions(),
+				fang.WithoutCompletions(),
 			)
 		})
 	})
@@ -70,7 +70,7 @@ func TestSetup(t *testing.T) {
 			Short: "no manpages",
 			Args:  cobra.NoArgs,
 		}
-		exercise(t, cmd, serpentine.WithoutManpage())
+		exercise(t, cmd, fang.WithoutManpage())
 
 		t.Run("man", func(t *testing.T) {
 			t.Skip("this fails when testing, but works as expected otherwise, no idea why yet")
@@ -78,7 +78,7 @@ func TestSetup(t *testing.T) {
 				t, cmd,
 				[]string{"man"},
 				assertError,
-				serpentine.WithoutManpage(),
+				fang.WithoutManpage(),
 			)
 		})
 	})
@@ -86,7 +86,7 @@ func TestSetup(t *testing.T) {
 	t.Run("with version and hash", func(t *testing.T) {
 		exercise(t, cobra.Command{
 			Use: "simple",
-		}, serpentine.WithVersion("v1.2.3"), serpentine.WithCommit("aaabbb"))
+		}, fang.WithVersion("v1.2.3"), fang.WithCommit("aaabbb"))
 	})
 
 	t.Run("with flags", func(t *testing.T) {
@@ -146,7 +146,7 @@ simple --string1=2 -s abc -b --bool1 --flag-not-found [args]
 	})
 }
 
-func exercise(t *testing.T, cmd cobra.Command, options ...serpentine.Option) {
+func exercise(t *testing.T, cmd cobra.Command, options ...fang.Option) {
 	t.Helper()
 
 	t.Run("error", func(t *testing.T) {
@@ -182,7 +182,7 @@ func doExercise(
 	cmd cobra.Command,
 	args []string,
 	assert func(t *testing.T, err error, stdout, stderr bytes.Buffer),
-	options ...serpentine.Option,
+	options ...fang.Option,
 ) {
 	t.Helper()
 	root := &cmd
@@ -191,7 +191,7 @@ func doExercise(
 	root.SetOut(&stdout)
 	root.SetErr(&stderr)
 	root.SetArgs(args)
-	err := serpentine.Execute(context.Background(), root, options...)
+	err := fang.Execute(context.Background(), root, options...)
 	assert(t, err, stdout, stderr)
 }
 

@@ -1,4 +1,4 @@
-package serpentine
+package fang
 
 import (
 	"context"
@@ -23,7 +23,7 @@ type settings struct {
 	theme       *Theme
 }
 
-// Option changes serpentine settings.
+// Option changes fang settings.
 type Option func(*settings)
 
 // WithoutCompletions disables completions.
@@ -61,7 +61,7 @@ func WithCommit(commit string) Option {
 	}
 }
 
-// Execute applies serpentine to the command and executes it!
+// Execute applies fang to the command and executes it.
 func Execute(ctx context.Context, root *cobra.Command, options ...Option) error {
 	opts := settings{
 		manpages:    true,
