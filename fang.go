@@ -1,3 +1,4 @@
+// Package fang provides styling for cobra commands.
 package fang
 
 import (

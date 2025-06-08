@@ -1,3 +1,4 @@
+// Package main is a fang example.
 package main
 
 import (
