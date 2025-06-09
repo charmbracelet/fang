@@ -17,6 +17,7 @@ import (
 const (
 	minSpace = 10
 	shortPad = 2
+	width    = 80
 )
 
 func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
@@ -85,7 +86,7 @@ func writeLongShort(w *colorprofile.Writer, styles Styles, longShort string) {
 		return
 	}
 	_, _ = fmt.Fprintln(w)
-	_, _ = fmt.Fprintln(w, styles.Help.PaddingLeft(shortPad).Render(longShort))
+	_, _ = fmt.Fprintln(w, styles.Help.Width(width).PaddingLeft(shortPad).Render(longShort))
 	_, _ = fmt.Fprintln(w, styles.Title.Render("usage"))
 	_, _ = fmt.Fprintln(w)
 }
