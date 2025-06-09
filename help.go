@@ -75,7 +75,7 @@ func writeError(w *colorprofile.Writer, styles Styles, err error) {
 		lipgloss.Left,
 		styles.ErrorDetails.Render("Try"),
 		styles.ErrorDetailsFlag.Render("--help"),
-		styles.ErrorDetails.UnsetMargins().PaddingLeft(1).Render("for usage details."),
+		styles.ErrorDetails.UnsetMargins().PaddingLeft(1).Render("for usage."),
 	))
 	_, _ = fmt.Fprintln(w)
 }
