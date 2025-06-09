@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -23,6 +24,10 @@ const (
 )
 
 var width = sync.OnceValue(func() int {
+	if s := os.Getenv("__FANG_TEST_WIDTH"); s != "" {
+		w, _ := strconv.Atoi(s)
+		return w
+	}
 	w, _, err := term.GetSize(os.Stdout.Fd())
 	if err != nil {
 		return 80

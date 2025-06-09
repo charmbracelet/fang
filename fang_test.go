@@ -185,6 +185,7 @@ func doExercise(
 	options ...fang.Option,
 ) {
 	t.Helper()
+	t.Setenv("__FANG_TEST_WIDTH", "45")
 	root := &cmd
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
