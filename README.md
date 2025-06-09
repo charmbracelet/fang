@@ -1,6 +1,15 @@
 # Fang
 
-An experimental small library to make user friendly [cobra][] commands.
+<p>
+    <img src="https://github.com/user-attachments/assets/9111a5d5-8a6d-4371-b3ae-113a0095566f" width="520" alt="Charm Fang art">
+</p>
+<p>
+    <a href="https://github.com/charmbracelet/fang/releases"><img src="https://img.shields.io/github/release/charmbracelet/fang.svg" alt="Latest Release"></a>
+    <a href="https://pkg.go.dev/github.com/charmbracelet/fang?tab=doc"><img src="https://godoc.org/github.com/charmbracelet/fang?status.svg" alt="GoDoc"></a>
+    <a href="https://github.com/charmbracelet/fang/actions"><img src="https://github.com/charmbracelet/fang/workflows/build/badge.svg" alt="Build Status"></a>
+</p>
+
+The command line starter kit. A small, experimental library for batteries-included [Cobra][cobra] applications.
 
 <img src="./example/1.svg" width="100%" alt="Example 1">
 
@@ -10,13 +19,14 @@ An experimental small library to make user friendly [cobra][] commands.
 
 ## Features
 
-- Beautiful help pages: styled help and usage pages
-- Automatic `--version`: set it to the [build info][info], or a provided version
-- Man pages: adds a hidden `man` command to generate _manpages_ using
+- **Fancy output**: fully styled help and usage pages
+- **Fancy errors**: fully styled errors
+- **Automatic `--version`**: set it to the [build info][info], or a version of your choice
+- **Manpages**: Adds a hidden `man` command to generate _manpages_ using
   [mango][][^1]
-- Completions: adds a `completion` command that generate shell completions
-- Silence usage (don't show the help after an user error)
-- Beautiful error handling
+- **Completionss**: Adds a `completion` command to generate shell completions
+- **Quality-of-Life**: Silent `usage` output (help is not shown after a user error)
+- **Themeable**: use the built-in theme, or make your own
 
 [info]: https://pkg.go.dev/runtime/debug#BuildInfo
 [cobra]: https://github.com/spf13/cobra
@@ -61,8 +71,8 @@ That's all there is to it!
 We’d love to hear your thoughts on this project. Feel free to drop us a note!
 
 - [Twitter](https://twitter.com/charmcli)
-- [The Fediverse](https://mastodon.social/@charmcli)
 - [Discord](https://charm.sh/chat)
+- [The Fediverse](https://mastodon.social/@charmcli)
 
 ## License
 
