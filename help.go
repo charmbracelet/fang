@@ -3,11 +3,14 @@ package fang
 import (
 	"cmp"
 	"fmt"
+	"os"
 	"regexp"
 	"strings"
+	"sync"
 
 	"github.com/charmbracelet/colorprofile"
 	"github.com/charmbracelet/lipgloss/v2"
+	"github.com/charmbracelet/x/term"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"golang.org/x/text/cases"
@@ -17,8 +20,15 @@ import (
 const (
 	minSpace = 10
 	shortPad = 2
-	width    = 80
 )
+
+var width = sync.OnceValue(func() int {
+	w, _, err := term.GetSize(os.Stdout.Fd())
+	if err != nil {
+		return 80
+	}
+	return min(w, 80)
+})
 
 func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
 	writeLongShort(w, styles, cmp.Or(c.Long, c.Short))
@@ -86,7 +96,7 @@ func writeLongShort(w *colorprofile.Writer, styles Styles, longShort string) {
 		return
 	}
 	_, _ = fmt.Fprintln(w)
-	_, _ = fmt.Fprintln(w, styles.Help.Width(width).PaddingLeft(shortPad).Render(longShort))
+	_, _ = fmt.Fprintln(w, styles.Help.Width(width()).PaddingLeft(shortPad).Render(longShort))
 	_, _ = fmt.Fprintln(w, styles.Title.Render("usage"))
 	_, _ = fmt.Fprintln(w)
 }
