@@ -1,21 +1,21 @@
 
-  no completions
-       
-  USAGE
+  no completions                                                                
+                                                                                  
+  USAGE                                                                           
 
     simple [--flags]
-          
-  EXAMPLES
-          
-      
-      
-          
-  COMMANDS
-          
+                                                                                  
+  EXAMPLES                                                                        
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+  COMMANDS                                                                        
+                                                                                  
     help [command]  Help about any command
-       
-  FLAGS
-       
+                                                                                  
+  FLAGS                                                                           
+                                                                                  
     -h --help       Help for simple
     -v --version    Version for simple
 

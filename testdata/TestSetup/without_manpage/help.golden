@@ -1,17 +1,17 @@
 
-  no manpages
-       
-  USAGE
+  no manpages                                                                   
+                                                                                  
+  USAGE                                                                           
 
     simple [--flags]
-          
-  EXAMPLES
-          
-      
-      
-       
-  FLAGS
-       
+                                                                                  
+  EXAMPLES                                                                        
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+  FLAGS                                                                           
+                                                                                  
     -h --help     Help for simple
     -v --version  Version for simple
 

@@ -1,22 +1,22 @@
 
-  Long help
-       
-  USAGE
+  Long help                                                                     
+                                                                                  
+  USAGE                                                                           
 
     simple [command] [args] [something-else] [--flags]
-          
-  EXAMPLES
-          
-      
-      
-          
-  COMMANDS
-          
+                                                                                  
+  EXAMPLES                                                                        
+                                                                                  
+                                                                                  
+                                                                                  
+                                                                                  
+  COMMANDS                                                                        
+                                                                                  
     completion [command]  Generate the autocompletion script for the specified shell
     help [command]        Help about any command
-       
-  FLAGS
-       
+                                                                                  
+  FLAGS                                                                           
+                                                                                  
     -h --help             Help for simple
     -v --version          Version for simple
 
