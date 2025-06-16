@@ -35,7 +35,10 @@ example --name=Carlos -a -s Becker -a
 example sub --async --foo=xyz --async arguments
 
 # Run with a quoted string:
-example sub2 "quoted string"
+example sub "quoted string"
+
+		# Mix and match:
+example sub "multi-word quoted string" --flag "another quoted string"
 		`,
 
 		RunE: func(c *cobra.Command, _ []string) error {

@@ -214,24 +214,26 @@ func styleExample(c *cobra.Command, line string, styles Codeblock) string {
 			args[i] = styles.Program.Name.Render(arg)
 			continue
 		}
-		if i == 1 && arg[0] != '"' && arg[0] != '-' {
+
+		quoteStart := arg[0] == '"'
+		quoteEnd := arg[len(arg)-1] == '"'
+		flagStart := arg[0] == '-'
+		if i == 1 && !quoteStart && !flagStart {
 			args[i] = styles.Program.Command.Render(arg)
 			continue
 		}
-		if nextIsFlag {
-			args[i] = styles.Program.Flag.Render(arg)
-			nextIsFlag = false
-			continue
-		}
-		if strings.HasPrefix(arg, `"`) {
+		if quoteStart {
 			isQuotedString = true
 		}
 		if isQuotedString {
 			args[i] = styles.Program.QuotedString.Render(arg)
+			if quoteEnd {
+				isQuotedString = false
+			}
 			continue
 		}
-		if strings.HasSuffix(arg, `"`) {
-			isQuotedString = false
+		if nextIsFlag {
+			args[i] = styles.Program.Flag.Render(arg)
 			continue
 		}
 		var dashes string
