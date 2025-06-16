@@ -2,11 +2,13 @@
   no manpages                                
                                              
   USAGE                                      
-
-    simple [--flags]
+                                             
+                         
+   simple [--flags]      
+                         
                                              
   FLAGS                                      
                                              
-    -h --help     Help for simple
-    -v --version  Version for simple
+     -h --help     Help for simple
+     -v --version  Version for simple
 

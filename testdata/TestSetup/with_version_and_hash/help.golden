@@ -1,4 +1,9 @@
-    simple [command] [--flags]
+                                             
+  USAGE                                      
+                                             
+                                   
+   simple [command] [--flags]      
+                                   
                                              
   COMMANDS                                   
                                              
@@ -7,6 +12,6 @@
                                              
   FLAGS                                      
                                              
-    -h --help             Help for simple
-    -v --version          Version for simple
+     -h --help            Help for simple
+     -v --version         Version for simple
 

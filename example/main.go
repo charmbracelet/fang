@@ -67,6 +67,14 @@ example sub2 "quoted string"
 		},
 	})
 
+	cmd.AddCommand(&cobra.Command{
+		Use:   "throw",
+		Short: "A command that throws an error",
+		RunE: func(*cobra.Command, []string) error {
+			return errors.New("a super long error string that is meant to test the error handling in fang. It should be long enough to wrap around and test the error styling and formatting capabilities of fang. This is a test to see how well fang handles long error messages and whether it can display them properly without breaking the layout or causing any issues")
+		},
+	})
+
 	// This is where the magic happens.
 	if err := fang.Execute(
 		context.Background(),

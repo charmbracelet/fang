@@ -2,8 +2,10 @@
   Long help                                  
                                              
   USAGE                                      
-
-    simple [command] [args] [something-else] [--flags]
+                                             
+                                                           
+   simple [command] [args] [something-else] [--flags]      
+                                                           
                                              
   COMMANDS                                   
                                              
@@ -12,6 +14,6 @@
                                              
   FLAGS                                      
                                              
-    -h --help             Help for simple
-    -v --version          Version for simple
+     -h --help            Help for simple
+     -v --version         Version for simple
 

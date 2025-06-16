@@ -21,7 +21,7 @@ type settings struct {
 	manpages    bool
 	version     string
 	commit      string
-	theme       *Theme
+	theme       *ColorScheme
 }
 
 // Option changes fang settings.
@@ -42,7 +42,7 @@ func WithoutManpage() Option {
 }
 
 // WithTheme sets the colorscheme.
-func WithTheme(theme Theme) Option {
+func WithTheme(theme ColorScheme) Option {
 	return func(s *settings) {
 		s.theme = &theme
 	}
