@@ -47,17 +47,16 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
 
 	// adjust width
 	usage = paddingRight(usage, width, styles.Codeblock.Text)
-	var exampleLines []string
-	for _, ex := range examples {
-		exampleLines = append(exampleLines, paddingRight(ex, width, styles.Codeblock.Text))
+	for i, ex := range examples {
+		examples[i] = paddingRight(ex, width, styles.Codeblock.Text)
 	}
 	styles.Codeblock.Base = styles.Codeblock.Base.Width(width + styles.Codeblock.Base.GetHorizontalFrameSize())
 
 	_, _ = fmt.Fprintln(w, styles.Title.Render("usage"))
 	_, _ = fmt.Fprintln(w, styles.Codeblock.Base.Render(usage))
-	if len(exampleLines) > 0 {
+	if len(examples) > 0 {
 		_, _ = fmt.Fprintln(w, styles.Title.Render("examples"))
-		_, _ = fmt.Fprintln(w, styles.Codeblock.Base.Render(lipgloss.JoinVertical(lipgloss.Top, exampleLines...)))
+		_, _ = fmt.Fprintln(w, styles.Codeblock.Base.Render(lipgloss.JoinVertical(lipgloss.Top, examples...)))
 	}
 
 	cmds, cmdKeys := evalCmds(c, styles)
@@ -275,8 +274,6 @@ func styleExample(c *cobra.Command, line string, styles Codeblock) string {
 }
 
 func evalFlags(c *cobra.Command, styles Styles) (map[string]string, []string) {
-	const shortPad = 4
-	const noShortPad = shortPad + 3
 	flags := map[string]string{}
 	keys := []string{}
 	c.Flags().VisitAll(func(f *pflag.Flag) {

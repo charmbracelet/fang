@@ -59,6 +59,7 @@ type Styles struct {
 	Program     Program
 }
 
+// Codeblock styles.
 type Codeblock struct {
 	Base    lipgloss.Style
 	Program Program
@@ -66,6 +67,7 @@ type Codeblock struct {
 	Comment lipgloss.Style
 }
 
+// Program name, args, flags, styling.
 type Program struct {
 	Name           lipgloss.Style
 	Command        lipgloss.Style
