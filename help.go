@@ -30,9 +30,9 @@ var width = sync.OnceValue(func() int {
 	}
 	w, _, err := term.GetSize(os.Stdout.Fd())
 	if err != nil {
-		return 80
+		return 120
 	}
-	return min(w, 80)
+	return min(w, 120)
 })
 
 func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
