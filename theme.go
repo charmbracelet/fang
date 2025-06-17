@@ -85,44 +85,39 @@ func makeStyles(cs ColorScheme) Styles {
 			Bold(true).
 			Foreground(cs.Title).
 			Transform(strings.ToUpper).
-			Width(width()-2).
-			Margin(1, 0, 1, 2),
+			Padding(1, 0).
+			Margin(0, 2).
+			Width(width()),
 		Codeblock: Codeblock{
 			Base: lipgloss.NewStyle().
 				Background(cs.Codeblock).
 				Foreground(cs.Base).
-				MarginLeft(2).
-				MarginRight(2).
-				Width(width() - 4).
-				PaddingTop(1).
-				PaddingBottom(1),
+				Margin(0, 2).
+				Padding(1, 2),
 			Text: lipgloss.NewStyle().
 				Background(cs.Codeblock),
 			Comment: lipgloss.NewStyle().
 				Background(cs.Codeblock).
-				Foreground(cs.Comment).
-				PaddingLeft(1),
+				Foreground(cs.Comment),
 			Program: Program{
 				Name: lipgloss.NewStyle().
 					Background(cs.Codeblock).
-					Foreground(cs.Program).
-					PaddingLeft(1),
+					Foreground(cs.Program),
 				Flag: lipgloss.NewStyle().
+					PaddingLeft(1).
 					Background(cs.Codeblock).
-					Foreground(cs.Flag).
-					PaddingLeft(1),
+					Foreground(cs.Flag),
 				Argument: lipgloss.NewStyle().
+					PaddingLeft(1).
 					Background(cs.Codeblock).
-					Foreground(cs.Argument).
-					PaddingLeft(1),
+					Foreground(cs.Argument),
 				DimmedArgument: lipgloss.NewStyle().
 					Background(cs.Codeblock).
-					Foreground(cs.DimmedArgument).
-					PaddingLeft(1),
+					Foreground(cs.DimmedArgument),
 				Command: lipgloss.NewStyle().
+					PaddingLeft(1).
 					Background(cs.Codeblock).
-					Foreground(cs.Command).
-					PaddingLeft(1),
+					Foreground(cs.Command),
 				QuotedString: lipgloss.NewStyle().
 					PaddingLeft(1).
 					Background(cs.Codeblock).

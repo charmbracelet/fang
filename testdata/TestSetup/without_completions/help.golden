@@ -1,18 +1,18 @@
 
   no completions                             
-                                             
-  USAGE                                      
-                                             
-                         
-   simple [--flags]      
-                         
-                                             
-  COMMANDS                                   
-                                             
+                                                 
+  USAGE                                          
+                                                 
+                           
+    simple[--flags]        
+                           
+                                                 
+  COMMANDS                                       
+                                                 
     help [command]  Help about any command
-                                             
-  FLAGS                                      
-                                             
+                                                 
+  FLAGS                                          
+                                                 
      -h --help      Help for simple
      -v --version   Version for simple
 

@@ -40,17 +40,18 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
 	usage := styleUsage(c, styles.Codeblock.Program, true)
 	examples := styleExamples(c, styles)
 
-	width := lipgloss.Width(usage)
+	uw := lipgloss.Width(usage)
 	for _, ex := range examples {
-		width = max(width, lipgloss.Width(ex))
+		uw = max(uw, lipgloss.Width(ex))
 	}
+	uw = min(width(), uw)
 
 	// adjust width
-	usage = paddingRight(usage, width, styles.Codeblock.Text)
+	usage = paddingRight(usage, uw, styles.Codeblock.Text)
 	for i, ex := range examples {
-		examples[i] = paddingRight(ex, width, styles.Codeblock.Text)
+		examples[i] = paddingRight(ex, uw, styles.Codeblock.Text)
 	}
-	styles.Codeblock.Base = styles.Codeblock.Base.Width(width + styles.Codeblock.Base.GetHorizontalFrameSize())
+	styles.Codeblock.Base = styles.Codeblock.Base.Width(uw + styles.Codeblock.Base.GetHorizontalFrameSize())
 
 	_, _ = fmt.Fprintln(w, styles.Title.Render("usage"))
 	_, _ = fmt.Fprintln(w, styles.Codeblock.Base.Render(usage))
@@ -194,7 +195,8 @@ func paddingRight(s string, targetSize int, st lipgloss.Style) string {
 	if size >= targetSize {
 		return s
 	}
-	return s + st.Render(strings.Repeat(" ", targetSize-size))
+	return st.Width(targetSize).Render(s)
+	// return s + st.Render(strings.Repeat(" ", targetSize-size))
 }
 
 func styleExample(c *cobra.Command, line string, styles Codeblock) string {
