@@ -50,7 +50,7 @@ example sub "multi-word quoted string" --flag "another quoted string"
 		},
 	}
 	cmd.PersistentFlags().StringVarP(&foo, "surname", "s", "doe", "Your surname")
-	cmd.Flags().StringVar(&foo, "name", "john", "Your name")
+	cmd.Flags().StringVar(&foo, "name", "jane", "Your name")
 	cmd.Flags().DurationVar(&d, "duration", 0, "Time since your last commit")
 	cmd.Flags().IntVar(&bar, "age", 0, "Your age")
 	cmd.Flags().Float64Var(&baz, "idk", 0.0, "I don't know")
