@@ -4,6 +4,7 @@ package fang
 import (
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"runtime/debug"
 
@@ -16,12 +17,16 @@ import (
 
 const shaLen = 7
 
+// ErrorHandler handles an error, printing them to the given [io.Writer].
+type ErrorHandler = func(w io.Writer, styles Styles, err error)
+
 type settings struct {
 	completions bool
 	manpages    bool
 	version     string
 	commit      string
 	theme       *ColorScheme
+	errHandler  ErrorHandler
 }
 
 // Option changes fang settings.
@@ -62,11 +67,19 @@ func WithCommit(commit string) Option {
 	}
 }
 
+// WithErrorHandler sets the error handler.
+func WithErrorHandler(handler ErrorHandler) Option {
+	return func(s *settings) {
+		s.errHandler = handler
+	}
+}
+
 // Execute applies fang to the command and executes it.
 func Execute(ctx context.Context, root *cobra.Command, options ...Option) error {
 	opts := settings{
 		manpages:    true,
 		completions: true,
+		errHandler:  DefaultErrorHandler,
 	}
 	for _, option := range options {
 		option(&opts)
@@ -130,7 +143,7 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 
 	if err := root.ExecuteContext(ctx); err != nil {
 		w := colorprofile.NewWriter(root.ErrOrStderr(), os.Environ())
-		writeError(w, styles, err)
+		opts.errHandler(w, styles, err)
 		return err //nolint:wrapcheck
 	}
 	return nil

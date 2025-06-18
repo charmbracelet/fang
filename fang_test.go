@@ -3,6 +3,8 @@ package fang_test
 import (
 	"bytes"
 	"context"
+	"fmt"
+	"io"
 	"testing"
 
 	"github.com/charmbracelet/fang"
@@ -16,6 +18,20 @@ func TestSetup(t *testing.T) {
 		exercise(t, cobra.Command{
 			Use: "simple",
 		})
+	})
+
+	t.Run("custom error handler", func(t *testing.T) {
+		doExercise(
+			t,
+			cobra.Command{
+				Use: "simple",
+			},
+			[]string{"nope"},
+			assertError,
+			fang.WithErrorHandler(func(w io.Writer, styles fang.Styles, err error) {
+				_, _ = fmt.Fprintf(w, "Custom error handler: %v\n", err)
+			}),
+		)
 	})
 
 	t.Run("complete", func(t *testing.T) {

@@ -3,6 +3,7 @@ package fang
 import (
 	"cmp"
 	"fmt"
+	"io"
 	"os"
 	"regexp"
 	"strconv"
@@ -93,7 +94,8 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
 	_, _ = fmt.Fprintln(w)
 }
 
-func writeError(w *colorprofile.Writer, styles Styles, err error) {
+// DefaultErrorHandler is the default [ErrorHandler] implementation.
+func DefaultErrorHandler(w io.Writer, styles Styles, err error) {
 	_, _ = fmt.Fprintln(w, styles.ErrorHeader.String())
 	_, _ = fmt.Fprintln(w, styles.ErrorText.Render(err.Error()+"."))
 	_, _ = fmt.Fprintln(w)
