@@ -36,16 +36,16 @@ func DefaultTheme(isDark bool) ColorScheme {
 	return ColorScheme{
 		Base:           c(charmtone.Charcoal, charmtone.Ash),
 		Title:          charmtone.Charple,
-		Description:    c(charmtone.Ash, charmtone.Squid),
 		Codeblock:      c(charmtone.Salt, lipgloss.Color("#2F2E36")),
-		Program:        charmtone.Malibu,
-		DimmedArgument: charmtone.Squid,
+		Program:        c(charmtone.Malibu, charmtone.Guppy),
+		Command:        c(charmtone.Pony, charmtone.Cheeky),
+		DimmedArgument: c(charmtone.Squid, charmtone.Oyster),
 		Comment:        c(charmtone.Squid, lipgloss.Color("#747282")),
-		Flag:           c(lipgloss.Color("#00BC82"), charmtone.Julep),
-		FlagDefault:    charmtone.Ash,
+		Flag:           c(lipgloss.Color("#0CB37F"), charmtone.Guac),
 		Argument:       c(charmtone.Charcoal, charmtone.Ash),
-		Command:        c(charmtone.Pony, charmtone.Dolly),
-		QuotedString:   c(charmtone.Coral, charmtone.Salmon),
+		Description:    c(charmtone.Charcoal, charmtone.Ash), // flag and command descriptions
+		FlagDefault:    c(charmtone.Smoke, charmtone.Squid),  // flag default values in descriptions
+		QuotedString:   c(charmtone.Charcoal, charmtone.Ash),
 		ErrorHeader: [2]color.Color{
 			charmtone.Butter,
 			charmtone.Cherry,
