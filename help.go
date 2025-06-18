@@ -39,13 +39,14 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
 	usage := styleUsage(c, styles.Codeblock.Program, true)
 	examples := styleExamples(c, styles)
 
-	maxw := lipgloss.Width(usage)
+	padding := styles.Codeblock.Base.GetHorizontalPadding()
+	blockWidth := lipgloss.Width(usage)
 	for _, ex := range examples {
-		maxw = max(maxw, lipgloss.Width(ex))
+		blockWidth = max(blockWidth, lipgloss.Width(ex))
 	}
-	maxw = min(width(), maxw)
+	blockWidth = min(width()-padding, blockWidth+padding)
 
-	styles.Codeblock.Base = styles.Codeblock.Base.Width(maxw - styles.Codeblock.Base.GetHorizontalPadding())
+	styles.Codeblock.Base = styles.Codeblock.Base.Width(blockWidth)
 
 	_, _ = fmt.Fprintln(w, styles.Title.Render("usage"))
 	_, _ = fmt.Fprintln(w, styles.Codeblock.Base.Render(usage))
