@@ -13,6 +13,7 @@ import (
 	mango "github.com/muesli/mango-cobra"
 	"github.com/muesli/roff"
 	"github.com/spf13/cobra"
+	"golang.org/x/term"
 )
 
 const shaLen = 7
@@ -86,7 +87,10 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 	}
 
 	if opts.theme == nil {
-		isDark := lipgloss.HasDarkBackground(os.Stdin, os.Stderr)
+		var isDark bool
+		if term.IsTerminal(int(os.Stdout.Fd())) {
+			isDark = lipgloss.HasDarkBackground(os.Stdin, os.Stderr)
+		}
 		t := DefaultTheme(isDark)
 		opts.theme = &t
 	}
