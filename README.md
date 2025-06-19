@@ -45,6 +45,7 @@ To use it, invoke `fang.Execute` passing your root `*cobra.Command`:
 package main
 
 import (
+	"context"
 	"os"
 
 	"github.com/charmbracelet/fang"
