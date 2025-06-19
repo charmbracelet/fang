@@ -318,7 +318,7 @@ type GroupedCommands struct {
 	Ungrouped []CommandInfo            // Commands without a group
 }
 
-// CommandInfo holds command display information
+// CommandInfo holds command display information.
 type CommandInfo struct {
 	Key  string
 	Help string
