@@ -86,8 +86,7 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 	}
 
 	if opts.theme == nil {
-		isDark := lipgloss.HasDarkBackground(os.Stdin, os.Stderr)
-		t := DefaultTheme(isDark)
+		t := DefaultTheme(isDark())
 		opts.theme = &t
 	}
 
@@ -159,4 +158,12 @@ func getKey(info *debug.BuildInfo, key string) string {
 		}
 	}
 	return ""
+}
+
+func isDark() bool {
+	if len(os.Args) > 1 && os.Args[1] != "completion" {
+		return lipgloss.HasDarkBackground(os.Stdin, os.Stderr)
+	}
+
+	return false
 }
