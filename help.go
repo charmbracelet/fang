@@ -62,9 +62,9 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
 		_, _ = fmt.Fprintln(w, styles.Codeblock.Base.Render(strings.Join(examples, "\n")))
 	}
 
-	groupedCmds := evalGroupedCmds(c, styles)
+	groupedCmds := evalCmds(c, styles)
 	flags, flagKeys := evalFlags(c, styles)
-	
+
 	// Calculate space for all commands and flags
 	allCmdKeys := []string{}
 	for _, cmds := range groupedCmds.Groups {
@@ -78,51 +78,10 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
 	space := calculateSpace(allCmdKeys, flagKeys)
 
 	leftPadding := 4
-	
+
 	// Render grouped commands
 	if hasAnyCommands(groupedCmds) {
-		// Build map of group ID to group title for rendering
-		groupTitles := make(map[string]string)
-		for _, group := range c.Groups() {
-			groupTitles[group.ID] = group.Title
-		}
-		
-		// Render each group
-		for _, groupID := range groupedCmds.Order {
-			if cmds, exists := groupedCmds.Groups[groupID]; exists && len(cmds) > 0 {
-				title := groupTitles[groupID]
-				if title == "" {
-					title = groupID + " Commands:"
-				}
-				_, _ = fmt.Fprintln(w, styles.Title.Render(strings.ToLower(title)))
-				for _, cmd := range cmds {
-					_, _ = fmt.Fprintln(w, lipgloss.JoinHorizontal(
-						lipgloss.Left,
-						lipgloss.NewStyle().PaddingLeft(leftPadding).Render(cmd.Key),
-						strings.Repeat(" ", space-lipgloss.Width(cmd.Key)),
-						cmd.Help,
-					))
-				}
-			}
-		}
-		
-		// Render ungrouped commands
-		if len(groupedCmds.Ungrouped) > 0 {
-			// Only show "Additional Commands" if there are grouped commands
-			title := "commands"
-			if len(groupedCmds.Groups) > 0 {
-				title = "additional commands"
-			}
-			_, _ = fmt.Fprintln(w, styles.Title.Render(title))
-			for _, cmd := range groupedCmds.Ungrouped {
-				_, _ = fmt.Fprintln(w, lipgloss.JoinHorizontal(
-					lipgloss.Left,
-					lipgloss.NewStyle().PaddingLeft(leftPadding).Render(cmd.Key),
-					strings.Repeat(" ", space-lipgloss.Width(cmd.Key)),
-					cmd.Help,
-				))
-			}
-		}
+		renderGroupedCommands(c, w, groupedCmds, styles, leftPadding, space)
 	}
 
 	if len(flags) > 0 {
@@ -352,11 +311,11 @@ func evalFlags(c *cobra.Command, styles Styles) (map[string]string, []string) {
 	return flags, keys
 }
 
-// GroupedCommands represents commands organized by groups
+// GroupedCommands represents commands organized by groups.
 type GroupedCommands struct {
-	Groups map[string][]CommandInfo // Map of group ID to commands
-	Order  []string                 // Order of groups to display
-	Ungrouped []CommandInfo          // Commands without a group
+	Groups    map[string][]CommandInfo // Map of group ID to commands
+	Order     []string                 // Order of groups to display
+	Ungrouped []CommandInfo            // Commands without a group
 }
 
 // CommandInfo holds command display information
@@ -365,65 +324,49 @@ type CommandInfo struct {
 	Help string
 }
 
-func evalCmds(c *cobra.Command, styles Styles) (map[string]string, []string) {
-	padStyle := lipgloss.NewStyle().PaddingLeft(0) //nolint:mnd
-	keys := []string{}
-	cmds := map[string]string{}
-	for _, sc := range c.Commands() {
-		if sc.Hidden {
-			continue
-		}
-		key := padStyle.Render(styleUsage(sc, styles.Program, false))
-		help := styles.FlagDescription.Render(sc.Short)
-		cmds[key] = help
-		keys = append(keys, key)
-	}
-	return cmds, keys
-}
-
-func evalGroupedCmds(c *cobra.Command, styles Styles) GroupedCommands {
+func evalCmds(c *cobra.Command, styles Styles) GroupedCommands {
 	padStyle := lipgloss.NewStyle().PaddingLeft(0) //nolint:mnd
 	grouped := GroupedCommands{
-		Groups: make(map[string][]CommandInfo),
-		Order:  []string{},
+		Groups:    make(map[string][]CommandInfo),
+		Order:     []string{},
 		Ungrouped: []CommandInfo{},
 	}
-	
-	// Build map of group ID to group for title lookup
+
+	// Build map of group ID to group for title lookup.
 	groupTitles := make(map[string]string)
 	for _, group := range c.Groups() {
 		groupTitles[group.ID] = group.Title
 		grouped.Order = append(grouped.Order, group.ID)
 	}
-	
-	// Process commands and group them
+
+	// Process commands and group them.
 	for _, sc := range c.Commands() {
 		if sc.Hidden {
 			continue
 		}
-		
+
 		key := padStyle.Render(styleUsage(sc, styles.Program, false))
 		help := styles.FlagDescription.Render(sc.Short)
 		cmdInfo := CommandInfo{Key: key, Help: help}
-		
+
 		if sc.GroupID != "" {
-			// Command belongs to a group
+			// Command belongs to a group.
 			if _, exists := groupTitles[sc.GroupID]; exists {
 				grouped.Groups[sc.GroupID] = append(grouped.Groups[sc.GroupID], cmdInfo)
 			} else {
-				// Group ID doesn't exist, treat as ungrouped
+				// Group ID doesn't exist, treat as ungrouped.
 				grouped.Ungrouped = append(grouped.Ungrouped, cmdInfo)
 			}
 		} else {
-			// Command has no group
+			// Command has no group.
 			grouped.Ungrouped = append(grouped.Ungrouped, cmdInfo)
 		}
 	}
-	
+
 	return grouped
 }
 
-// hasAnyCommands checks if there are any commands to display
+// hasAnyCommands checks if there are any commands to display.
 func hasAnyCommands(grouped GroupedCommands) bool {
 	if len(grouped.Ungrouped) > 0 {
 		return true
@@ -434,6 +377,62 @@ func hasAnyCommands(grouped GroupedCommands) bool {
 		}
 	}
 	return false
+}
+
+// renderGroupedCommands renders the grouped commands section.
+func renderGroupedCommands(c *cobra.Command, w *colorprofile.Writer, groupedCmds GroupedCommands, styles Styles, leftPadding, space int) {
+	// Build map of group ID to group title for rendering
+	groupTitles := make(map[string]string)
+	for _, group := range c.Groups() {
+		groupTitles[group.ID] = group.Title
+	}
+
+	// Render each group
+	for _, groupID := range groupedCmds.Order {
+		if cmds, exists := groupedCmds.Groups[groupID]; exists && len(cmds) > 0 {
+			renderCommandGroup(w, groupID, cmds, groupTitles, styles, leftPadding, space)
+		}
+	}
+
+	// Render ungrouped commands
+	if len(groupedCmds.Ungrouped) > 0 {
+		renderUngroupedCommands(w, groupedCmds, styles, leftPadding, space)
+	}
+}
+
+// renderCommandGroup renders a single command group.
+func renderCommandGroup(w *colorprofile.Writer, groupID string, cmds []CommandInfo, groupTitles map[string]string, styles Styles, leftPadding, space int) {
+	title := groupTitles[groupID]
+	if title == "" {
+		title = groupID + " Commands:"
+	}
+	_, _ = fmt.Fprintln(w, styles.Title.Render(strings.ToLower(title)))
+	for _, cmd := range cmds {
+		_, _ = fmt.Fprintln(w, lipgloss.JoinHorizontal(
+			lipgloss.Left,
+			lipgloss.NewStyle().PaddingLeft(leftPadding).Render(cmd.Key),
+			strings.Repeat(" ", space-lipgloss.Width(cmd.Key)),
+			cmd.Help,
+		))
+	}
+}
+
+// renderUngroupedCommands renders the ungrouped commands section.
+func renderUngroupedCommands(w *colorprofile.Writer, groupedCmds GroupedCommands, styles Styles, leftPadding, space int) {
+	// Only show "Additional Commands" if there are grouped commands
+	title := "commands"
+	if len(groupedCmds.Groups) > 0 {
+		title = "additional commands"
+	}
+	_, _ = fmt.Fprintln(w, styles.Title.Render(title))
+	for _, cmd := range groupedCmds.Ungrouped {
+		_, _ = fmt.Fprintln(w, lipgloss.JoinHorizontal(
+			lipgloss.Left,
+			lipgloss.NewStyle().PaddingLeft(leftPadding).Render(cmd.Key),
+			strings.Repeat(" ", space-lipgloss.Width(cmd.Key)),
+			cmd.Help,
+		))
+	}
 }
 
 func calculateSpace(k1, k2 []string) int {
