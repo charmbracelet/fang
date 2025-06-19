@@ -83,7 +83,6 @@ example sub "multi-word quoted string" --flag "another quoted string"
 		context.Background(),
 		cmd,
 		fang.WithoutManpage(),
-		fang.WithoutCompletions(),
 	); err != nil {
 		os.Exit(1)
 	}

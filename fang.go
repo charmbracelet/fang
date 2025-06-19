@@ -161,9 +161,9 @@ func getKey(info *debug.BuildInfo, key string) string {
 }
 
 func isDark() bool {
-	if len(os.Args) > 1 && os.Args[1] != "completion" {
-		return lipgloss.HasDarkBackground(os.Stdin, os.Stderr)
+	if len(os.Args) > 1 && os.Args[1] == "completion" {
+		return false
 	}
 
-	return false
+	return lipgloss.HasDarkBackground(os.Stdin, os.Stderr)
 }
