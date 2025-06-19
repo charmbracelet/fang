@@ -2,10 +2,12 @@ package fang
 
 import (
 	"image/color"
+	"os"
 	"strings"
 
 	"github.com/charmbracelet/lipgloss/v2"
 	"github.com/charmbracelet/x/exp/charmtone"
+	"github.com/charmbracelet/x/term"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -82,6 +84,17 @@ type Program struct {
 	Argument       lipgloss.Style
 	DimmedArgument lipgloss.Style
 	QuotedString   lipgloss.Style
+}
+
+func mustColorscheme(cs *ColorScheme) ColorScheme {
+	if cs != nil {
+		return *cs
+	}
+	var isDark bool
+	if term.IsTerminal(os.Stdout.Fd()) {
+		isDark = lipgloss.HasDarkBackground(os.Stdin, os.Stderr)
+	}
+	return DefaultTheme(isDark)
 }
 
 func makeStyles(cs ColorScheme) Styles {

@@ -9,8 +9,6 @@ import (
 	"runtime/debug"
 
 	"github.com/charmbracelet/colorprofile"
-	"github.com/charmbracelet/lipgloss/v2"
-	"github.com/charmbracelet/x/term"
 	mango "github.com/muesli/mango-cobra"
 	"github.com/muesli/roff"
 	"github.com/spf13/cobra"
@@ -86,20 +84,9 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 		option(&opts)
 	}
 
-	if opts.theme == nil {
-		var isDark bool
-		if term.IsTerminal(os.Stdout.Fd()) {
-			isDark = lipgloss.HasDarkBackground(os.Stdin, os.Stderr)
-		}
-		t := DefaultTheme(isDark)
-		opts.theme = &t
-	}
-
-	styles := makeStyles(*opts.theme)
-
 	root.SetHelpFunc(func(c *cobra.Command, _ []string) {
 		w := colorprofile.NewWriter(c.OutOrStdout(), os.Environ())
-		helpFn(c, w, styles)
+		helpFn(c, w, makeStyles(mustColorscheme(opts.theme)))
 	})
 	root.SilenceUsage = true
 	root.SilenceErrors = true
@@ -147,7 +134,7 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 
 	if err := root.ExecuteContext(ctx); err != nil {
 		w := colorprofile.NewWriter(root.ErrOrStderr(), os.Environ())
-		opts.errHandler(w, styles, err)
+		opts.errHandler(w, makeStyles(mustColorscheme(opts.theme)), err)
 		return err //nolint:wrapcheck
 	}
 	return nil
