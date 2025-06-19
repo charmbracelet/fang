@@ -92,7 +92,7 @@ func mustColorscheme(cs *ColorScheme) ColorScheme {
 	}
 	var isDark bool
 	if term.IsTerminal(os.Stdout.Fd()) {
-		isDark = lipgloss.HasDarkBackground(os.Stdin, os.Stderr)
+		isDark = lipgloss.HasDarkBackground(os.Stdin, os.Stdout)
 	}
 	return DefaultTheme(isDark)
 }
