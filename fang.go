@@ -10,10 +10,10 @@ import (
 
 	"github.com/charmbracelet/colorprofile"
 	"github.com/charmbracelet/lipgloss/v2"
+	"github.com/charmbracelet/x/term"
 	mango "github.com/muesli/mango-cobra"
 	"github.com/muesli/roff"
 	"github.com/spf13/cobra"
-	"golang.org/x/term"
 )
 
 const shaLen = 7
@@ -88,7 +88,7 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 
 	if opts.theme == nil {
 		var isDark bool
-		if term.IsTerminal(int(os.Stdout.Fd())) {
+		if term.IsTerminal(os.Stdout.Fd()) {
 			isDark = lipgloss.HasDarkBackground(os.Stdin, os.Stderr)
 		}
 		t := DefaultTheme(isDark)
