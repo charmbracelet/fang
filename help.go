@@ -99,13 +99,31 @@ func DefaultErrorHandler(w io.Writer, styles Styles, err error) {
 	_, _ = fmt.Fprintln(w, styles.ErrorHeader.String())
 	_, _ = fmt.Fprintln(w, styles.ErrorText.Render(err.Error()+"."))
 	_, _ = fmt.Fprintln(w)
-	_, _ = fmt.Fprintln(w, lipgloss.JoinHorizontal(
-		lipgloss.Left,
-		styles.ErrorText.UnsetWidth().Render("Try"),
-		styles.Program.Flag.Render("--help"),
-		styles.ErrorText.UnsetWidth().UnsetMargins().UnsetTransform().PaddingLeft(1).Render("for usage."),
-	))
-	_, _ = fmt.Fprintln(w)
+	if isUsageError(err) {
+		_, _ = fmt.Fprintln(w, lipgloss.JoinHorizontal(
+			lipgloss.Left,
+			styles.ErrorText.UnsetWidth().Render("Try"),
+			styles.Program.Flag.Render("--help"),
+			styles.ErrorText.UnsetWidth().UnsetMargins().UnsetTransform().PaddingLeft(1).Render("for usage."),
+		))
+		_, _ = fmt.Fprintln(w)
+	}
+}
+
+func isUsageError(err error) bool {
+	s := err.Error()
+	for _, prefix := range []string{
+		"flag needs an argument:",
+		"unknown flag:",
+		"unknown shorthand flag:",
+		"unknown command",
+		"invalid argument",
+	} {
+		if strings.HasPrefix(s, prefix) {
+			return true
+		}
+	}
+	return false
 }
 
 func writeLongShort(w *colorprofile.Writer, styles Styles, longShort string) {
