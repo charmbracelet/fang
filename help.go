@@ -110,6 +110,8 @@ func DefaultErrorHandler(w io.Writer, styles Styles, err error) {
 	}
 }
 
+// XXX: this is a hack to detect usage errors.
+// See: https://github.com/spf13/cobra/pull/2266
 func isUsageError(err error) bool {
 	s := err.Error()
 	for _, prefix := range []string{
