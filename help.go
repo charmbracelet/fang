@@ -21,6 +21,7 @@ import (
 const (
 	minSpace = 10
 	shortPad = 2
+	longPad  = 4
 )
 
 var width = sync.OnceValue(func() int {
@@ -66,17 +67,12 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
 	flags, flagKeys := evalFlags(c, styles)
 	space := calculateSpace(cmdKeys, flagKeys)
 
-	leftPadding := 4
-	if len(cmds) > 0 {
-		_, _ = fmt.Fprintln(w, styles.Title.Render("commands"))
-		for _, k := range cmdKeys {
-			_, _ = fmt.Fprintln(w, lipgloss.JoinHorizontal(
-				lipgloss.Left,
-				lipgloss.NewStyle().PaddingLeft(leftPadding).Render(k),
-				strings.Repeat(" ", space-lipgloss.Width(k)),
-				cmds[k],
-			))
-		}
+	groups := getCmdGroupNames(c)
+	// render default group first
+	renderCommandGroup(w, styles, space, "commands", cmds[""])
+	delete(cmds, "")
+	for k, v := range cmds {
+		renderCommandGroup(w, styles, space, groups[k], v)
 	}
 
 	if len(flags) > 0 {
@@ -84,7 +80,7 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
 		for _, k := range flagKeys {
 			_, _ = fmt.Fprintln(w, lipgloss.JoinHorizontal(
 				lipgloss.Left,
-				lipgloss.NewStyle().PaddingLeft(leftPadding).Render(k),
+				lipgloss.NewStyle().PaddingLeft(longPad).Render(k),
 				strings.Repeat(" ", space-lipgloss.Width(k)),
 				flags[k],
 			))
@@ -308,6 +304,27 @@ func styleExample(c *cobra.Command, line string, indent bool, styles Codeblock) 
 	)
 }
 
+func renderCommandGroup(
+	w io.Writer,
+	styles Styles,
+	space int,
+	name string,
+	help map[string]string,
+) {
+	if len(help) == 0 {
+		return
+	}
+	_, _ = fmt.Fprintln(w, styles.Title.Render(name))
+	for k, v := range help {
+		_, _ = fmt.Fprintln(w, lipgloss.JoinHorizontal(
+			lipgloss.Left,
+			lipgloss.NewStyle().PaddingLeft(longPad).Render(k),
+			strings.Repeat(" ", space-lipgloss.Width(k)),
+			v,
+		))
+	}
+}
+
 func evalFlags(c *cobra.Command, styles Styles) (map[string]string, []string) {
 	flags := map[string]string{}
 	keys := []string{}
@@ -319,12 +336,12 @@ func evalFlags(c *cobra.Command, styles Styles) (map[string]string, []string) {
 		if f.Shorthand == "" {
 			parts = append(
 				parts,
-				styles.Program.Flag.Render("--"+f.Name),
+				styles.Program.Flag.UnsetPadding().Render("--"+f.Name),
 			)
 		} else {
 			parts = append(
 				parts,
-				styles.Program.Flag.Render("-"+f.Shorthand),
+				styles.Program.Flag.UnsetPadding().Render("-"+f.Shorthand),
 				styles.Program.Flag.Render("--"+f.Name),
 			)
 		}
@@ -343,20 +360,42 @@ func evalFlags(c *cobra.Command, styles Styles) (map[string]string, []string) {
 	return flags, keys
 }
 
-func evalCmds(c *cobra.Command, styles Styles) (map[string]string, []string) {
+type commandsHelp map[string]string
+
+func evalCmds(c *cobra.Command, styles Styles) (map[string]commandsHelp, []string) {
 	padStyle := lipgloss.NewStyle().PaddingLeft(0) //nolint:mnd
 	keys := []string{}
-	cmds := map[string]string{}
-	for _, sc := range c.Commands() {
-		if sc.Hidden {
-			continue
+	cmds := map[string]commandsHelp{}
+	for groupID, scs := range getCmdGroups(c) {
+		group := map[string]string{}
+		for _, sc := range scs {
+			if sc.Hidden {
+				continue
+			}
+			key := padStyle.Render(styleUsage(sc, styles.Program, false))
+			help := styles.FlagDescription.Render(sc.Short)
+			group[key] = help
+			keys = append(keys, key)
 		}
-		key := padStyle.Render(styleUsage(sc, styles.Program, false))
-		help := styles.FlagDescription.Render(sc.Short)
-		cmds[key] = help
-		keys = append(keys, key)
+		cmds[groupID] = group
 	}
 	return cmds, keys
+}
+
+func getCmdGroupNames(c *cobra.Command) map[string]string {
+	result := map[string]string{}
+	for _, g := range c.Groups() {
+		result[g.ID] = g.Title
+	}
+	return result
+}
+
+func getCmdGroups(c *cobra.Command) map[string][]*cobra.Command {
+	result := map[string][]*cobra.Command{}
+	for _, sc := range c.Commands() {
+		result[sc.GroupID] = append(result[sc.GroupID], sc)
+	}
+	return result
 }
 
 func calculateSpace(k1, k2 []string) int {

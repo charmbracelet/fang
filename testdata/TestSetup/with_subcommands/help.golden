@@ -9,12 +9,12 @@
             
   COMMANDS  
             
-    completion [command]  Generate the autocompletion script for the specified shell
     help [command]        Help about any command
     sub-cmd               A sub command
+    completion [command]  Generate the autocompletion script for the specified shell
          
   FLAGS  
          
-     -h --help            Help for simple
-     -v --version         Version for simple
+    -h --help             Help for simple
+    -v --version          Version for simple
 

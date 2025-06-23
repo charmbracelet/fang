@@ -32,10 +32,10 @@
          
   FLAGS  
          
-     --bool1              A bool flag
-     -b --bool2           A bool flag
-     -h --help            Help for simple
-     --string1            A string flag
-     -s --string2         A string flag
-     -v --version         Version for simple
+    --bool1               A bool flag
+    -b --bool2            A bool flag
+    -h --help             Help for simple
+    --string1             A string flag
+    -s --string2          A string flag
+    -v --version          Version for simple
 
