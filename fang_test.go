@@ -141,6 +141,37 @@ func TestSetup(t *testing.T) {
 		exercise(t, cmd)
 	})
 
+	t.Run("with command groups", func(t *testing.T) {
+		cmd := cobra.Command{
+			Use:   "simple",
+			Short: "Short help",
+		}
+		cmd.AddGroup(&cobra.Group{
+			ID:    "1",
+			Title: "First group",
+		})
+		cmd.AddGroup(&cobra.Group{
+			ID:    "2",
+			Title: "Second group",
+		})
+		cmd.AddCommand(&cobra.Command{
+			Use:   "sub-cmd",
+			Short: "a sub command",
+		})
+		cmd.AddCommand(&cobra.Command{
+			Use:     "sub-cmd-2",
+			Short:   "a sub command",
+			GroupID: "1",
+		})
+		cmd.AddCommand(&cobra.Command{
+			Use:     "sub-cmd-3",
+			Short:   "a sub command",
+			GroupID: "2",
+		})
+
+		exercise(t, cmd)
+	})
+
 	t.Run("with examples", func(t *testing.T) {
 		cmd := cobra.Command{
 			Use:   "simple",

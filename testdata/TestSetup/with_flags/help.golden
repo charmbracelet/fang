@@ -14,19 +14,19 @@
          
   FLAGS  
          
-     --bool1              A bool flag
-     --bool2              A bool flag (true)
-     -b --bool3           A bool flag (true)
-     --float1             A float flag
-     --float2             A float flag (10)
-     -f --float3          A float flag (10)
-     -h --help            Help for simple
-     --int1               An int flag
-     --int2               An int flag (10)
-     -i --int3            An int flag (10)
-     --no-help            
-     --string1            A string flag (default-value)
-     --string2            A string flag
-     -s --string3         A string flag
-     -v --version         Version for simple
+    --bool1               A bool flag
+    --bool2               A bool flag (true)
+    -b --bool3            A bool flag (true)
+    --float1              A float flag
+    --float2              A float flag (10)
+    -f --float3           A float flag (10)
+    -h --help             Help for simple
+    --int1                An int flag
+    --int2                An int flag (10)
+    -i --int3             An int flag (10)
+    --no-help             
+    --string1             A string flag (default-value)
+    --string2             A string flag
+    -s --string3          A string flag
+    -v --version          Version for simple
 

@@ -1,3 +1,5 @@
+
+  Short help                                 
          
   USAGE  
          
@@ -9,6 +11,15 @@
             
     completion [command]  Generate the autocompletion script for the specified shell
     help [command]        Help about any command
+    sub-cmd               A sub command
+               
+  FIRST GROUP  
+               
+    sub-cmd-2             A sub command
+                
+  SECOND GROUP  
+                
+    sub-cmd-3             A sub command
          
   FLAGS  
          

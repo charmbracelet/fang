@@ -67,17 +67,23 @@ ENV_A=0 ENV_B=0 ENV_C=0 \
 	_ = cmd.Flags().MarkHidden("idk")
 	_ = cmd.Flags().MarkHidden("error")
 
+	cmd.AddGroup(&cobra.Group{
+		ID:    "group1",
+		Title: "My Group",
+	})
 	cmd.AddCommand(&cobra.Command{
-		Use:   "sub [command] [flags] [args]",
-		Short: "An example subcommand",
+		Use:     "sub [command] [flags] [args]",
+		Short:   "An example subcommand",
+		GroupID: "group1",
 		Run: func(c *cobra.Command, _ []string) {
 			c.Println("Ran the sub command!")
 		},
 	})
 
 	cmd.AddCommand(&cobra.Command{
-		Use:   "throw",
-		Short: "Throws an error",
+		Use:     "throw",
+		Short:   "Throws an error",
+		GroupID: "group1",
 		RunE: func(*cobra.Command, []string) error {
 			return errors.New("a super long error string that is meant to test the error handling in fang. It should be long enough to wrap around and test the error styling and formatting capabilities of fang. This is a test to see how well fang handles long error messages and whether it can display them properly without breaking the layout or causing any issues")
 		},

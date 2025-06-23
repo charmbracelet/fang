@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"fmt"
 	"io"
+	"iter"
 	"os"
 	"regexp"
 	"strconv"
@@ -21,6 +22,7 @@ import (
 const (
 	minSpace = 10
 	shortPad = 2
+	longPad  = 4
 )
 
 var width = sync.OnceValue(func() int {
@@ -62,33 +64,37 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
 		_, _ = fmt.Fprintln(w, styles.Codeblock.Base.Render(strings.Join(examples, "\n")))
 	}
 
+	groups, groupKeys := evalGroups(c)
 	cmds, cmdKeys := evalCmds(c, styles)
 	flags, flagKeys := evalFlags(c, styles)
 	space := calculateSpace(cmdKeys, flagKeys)
 
-	leftPadding := 4
-	if len(cmds) > 0 {
-		_, _ = fmt.Fprintln(w, styles.Title.Render("commands"))
-		for _, k := range cmdKeys {
-			_, _ = fmt.Fprintln(w, lipgloss.JoinHorizontal(
-				lipgloss.Left,
-				lipgloss.NewStyle().PaddingLeft(leftPadding).Render(k),
-				strings.Repeat(" ", space-lipgloss.Width(k)),
-				cmds[k],
-			))
+	for _, groupID := range groupKeys {
+		group := cmds[groupID]
+		if len(group) == 0 {
+			continue
 		}
+		renderGroup(w, styles, space, groups[groupID], func(yield func(string, string) bool) {
+			for _, k := range cmdKeys {
+				cmds, ok := group[k]
+				if !ok {
+					continue
+				}
+				if !yield(k, cmds) {
+					return
+				}
+			}
+		})
 	}
 
 	if len(flags) > 0 {
-		_, _ = fmt.Fprintln(w, styles.Title.Render("flags"))
-		for _, k := range flagKeys {
-			_, _ = fmt.Fprintln(w, lipgloss.JoinHorizontal(
-				lipgloss.Left,
-				lipgloss.NewStyle().PaddingLeft(leftPadding).Render(k),
-				strings.Repeat(" ", space-lipgloss.Width(k)),
-				flags[k],
-			))
-		}
+		renderGroup(w, styles, space, "flags", func(yield func(string, string) bool) {
+			for _, k := range flagKeys {
+				if !yield(k, flags[k]) {
+					return
+				}
+			}
+		})
 	}
 
 	_, _ = fmt.Fprintln(w)
@@ -319,12 +325,12 @@ func evalFlags(c *cobra.Command, styles Styles) (map[string]string, []string) {
 		if f.Shorthand == "" {
 			parts = append(
 				parts,
-				styles.Program.Flag.Render("--"+f.Name),
+				styles.Program.Flag.UnsetPadding().Render("--"+f.Name),
 			)
 		} else {
 			parts = append(
 				parts,
-				styles.Program.Flag.Render("-"+f.Shorthand),
+				styles.Program.Flag.UnsetPadding().Render("-"+f.Shorthand),
 				styles.Program.Flag.Render("--"+f.Name),
 			)
 		}
@@ -343,20 +349,48 @@ func evalFlags(c *cobra.Command, styles Styles) (map[string]string, []string) {
 	return flags, keys
 }
 
-func evalCmds(c *cobra.Command, styles Styles) (map[string]string, []string) {
+// result is map[groupID]map[styled cmd name]styled cmd help, and the keys in
+// the order they are defined.
+func evalCmds(c *cobra.Command, styles Styles) (map[string](map[string]string), []string) {
 	padStyle := lipgloss.NewStyle().PaddingLeft(0) //nolint:mnd
 	keys := []string{}
-	cmds := map[string]string{}
+	cmds := map[string]map[string]string{}
 	for _, sc := range c.Commands() {
 		if sc.Hidden {
 			continue
 		}
+		if _, ok := cmds[sc.GroupID]; !ok {
+			cmds[sc.GroupID] = map[string]string{}
+		}
 		key := padStyle.Render(styleUsage(sc, styles.Program, false))
 		help := styles.FlagDescription.Render(sc.Short)
-		cmds[key] = help
+		cmds[sc.GroupID][key] = help
 		keys = append(keys, key)
 	}
 	return cmds, keys
+}
+
+func evalGroups(c *cobra.Command) (map[string]string, []string) {
+	// make sure the default group is the first
+	ids := []string{""}
+	groups := map[string]string{"": "commands"}
+	for _, g := range c.Groups() {
+		groups[g.ID] = g.Title
+		ids = append(ids, g.ID)
+	}
+	return groups, ids
+}
+
+func renderGroup(w io.Writer, styles Styles, space int, name string, items iter.Seq2[string, string]) {
+	_, _ = fmt.Fprintln(w, styles.Title.Render(name))
+	for key, help := range items {
+		_, _ = fmt.Fprintln(w, lipgloss.JoinHorizontal(
+			lipgloss.Left,
+			lipgloss.NewStyle().PaddingLeft(longPad).Render(key),
+			strings.Repeat(" ", space-lipgloss.Width(key)),
+			help,
+		))
+	}
 }
 
 func calculateSpace(k1, k2 []string) int {
