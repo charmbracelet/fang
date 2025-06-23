@@ -6,6 +6,7 @@ import (
 	"io"
 	"iter"
 	"os"
+	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
@@ -48,20 +49,25 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
 		blockWidth = max(blockWidth, lipgloss.Width(ex))
 	}
 	blockWidth = min(width()-padding, blockWidth+padding)
+	blockStyle := styles.Codeblock.Base.Width(blockWidth)
 
-	styles.Codeblock.Base = styles.Codeblock.Base.Width(blockWidth)
+	// if the color profile is ascii or notty, or if the block has no
+	// background color set, remove the vertical padding.
+	if w.Profile <= colorprofile.Ascii || reflect.DeepEqual(blockStyle.GetBackground(), lipgloss.NoColor{}) {
+		blockStyle = blockStyle.PaddingTop(0).PaddingBottom(0)
+	}
 
 	_, _ = fmt.Fprintln(w, styles.Title.Render("usage"))
-	_, _ = fmt.Fprintln(w, styles.Codeblock.Base.Render(usage))
+	_, _ = fmt.Fprintln(w, blockStyle.Render(usage))
 	if len(examples) > 0 {
-		cw := styles.Codeblock.Base.GetWidth() - styles.Codeblock.Base.GetHorizontalPadding()
+		cw := blockStyle.GetWidth() - blockStyle.GetHorizontalPadding()
 		_, _ = fmt.Fprintln(w, styles.Title.Render("examples"))
 		for i, example := range examples {
 			if lipgloss.Width(example) > cw {
 				examples[i] = ansi.Truncate(example, cw, "…")
 			}
 		}
-		_, _ = fmt.Fprintln(w, styles.Codeblock.Base.Render(strings.Join(examples, "\n")))
+		_, _ = fmt.Fprintln(w, blockStyle.Render(strings.Join(examples, "\n")))
 	}
 
 	groups, groupKeys := evalGroups(c)
