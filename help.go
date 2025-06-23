@@ -4,8 +4,10 @@ import (
 	"cmp"
 	"fmt"
 	"io"
+	"maps"
 	"os"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -71,8 +73,10 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
 	// render default group first
 	renderCommandGroup(w, styles, space, "commands", cmds[""])
 	delete(cmds, "")
-	for k, v := range cmds {
-		renderCommandGroup(w, styles, space, groups[k], v)
+	groupIDs := slices.Collect(maps.Keys(groups))
+	slices.Sort(groupIDs)
+	for _, v := range groupIDs {
+		renderCommandGroup(w, styles, space, groups[v], cmds[v])
 	}
 
 	if len(flags) > 0 {
@@ -315,12 +319,14 @@ func renderCommandGroup(
 		return
 	}
 	_, _ = fmt.Fprintln(w, styles.Title.Render(name))
-	for k, v := range help {
+	keys := slices.Collect(maps.Keys(help))
+	slices.Sort(keys)
+	for _, k := range keys {
 		_, _ = fmt.Fprintln(w, lipgloss.JoinHorizontal(
 			lipgloss.Left,
 			lipgloss.NewStyle().PaddingLeft(longPad).Render(k),
 			strings.Repeat(" ", space-lipgloss.Width(k)),
-			v,
+			help[k],
 		))
 	}
 }

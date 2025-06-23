@@ -9,8 +9,8 @@
             
   COMMANDS  
             
-    help [command]        Help about any command
     completion [command]  Generate the autocompletion script for the specified shell
+    help [command]        Help about any command
          
   FLAGS  
          
