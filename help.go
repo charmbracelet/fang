@@ -70,23 +70,21 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
 	space := calculateSpace(cmdKeys, flagKeys)
 
 	for _, groupID := range groupKeys {
-		if len(cmds[groupID]) > 0 {
-			group := cmds[groupID]
-			if len(group) == 0 {
-				continue
-			}
-			renderGroup(w, styles, space, groups[groupID], func(yield func(string, string) bool) {
-				for _, k := range cmdKeys {
-					cmds, ok := group[k]
-					if !ok {
-						continue
-					}
-					if !yield(k, cmds) {
-						return
-					}
-				}
-			})
+		group := cmds[groupID]
+		if len(group) == 0 {
+			continue
 		}
+		renderGroup(w, styles, space, groups[groupID], func(yield func(string, string) bool) {
+			for _, k := range cmdKeys {
+				cmds, ok := group[k]
+				if !ok {
+					continue
+				}
+				if !yield(k, cmds) {
+					return
+				}
+			}
+		})
 	}
 
 	if len(flags) > 0 {
