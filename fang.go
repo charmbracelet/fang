@@ -9,6 +9,7 @@ import (
 	"runtime/debug"
 
 	"github.com/charmbracelet/colorprofile"
+	"github.com/charmbracelet/lipgloss/v2"
 	mango "github.com/muesli/mango-cobra"
 	"github.com/muesli/roff"
 	"github.com/spf13/cobra"
@@ -24,7 +25,7 @@ type settings struct {
 	manpages    bool
 	version     string
 	commit      string
-	theme       *ColorScheme
+	colorscheme func(lipgloss.LightDarkFunc) ColorScheme
 	errHandler  ErrorHandler
 }
 
@@ -45,10 +46,20 @@ func WithoutManpage() Option {
 	}
 }
 
+// WithColorSchemeFunc sets a function that return colorscheme.
+func WithColorSchemeFunc(cs func(lipgloss.LightDarkFunc) ColorScheme) Option {
+	return func(s *settings) {
+		s.colorscheme = cs
+	}
+}
+
 // WithTheme sets the colorscheme.
+// Deprecated: use [WithColorSchemeFunc] instead.
 func WithTheme(theme ColorScheme) Option {
 	return func(s *settings) {
-		s.theme = &theme
+		s.colorscheme = func(lipgloss.LightDarkFunc) ColorScheme {
+			return theme
+		}
 	}
 }
 
@@ -78,6 +89,7 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 	opts := settings{
 		manpages:    true,
 		completions: true,
+		colorscheme: DefaultColorScheme,
 		errHandler:  DefaultErrorHandler,
 	}
 	for _, option := range options {
@@ -86,7 +98,7 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 
 	root.SetHelpFunc(func(c *cobra.Command, _ []string) {
 		w := colorprofile.NewWriter(c.OutOrStdout(), os.Environ())
-		helpFn(c, w, makeStyles(mustColorscheme(opts.theme)))
+		helpFn(c, w, makeStyles(mustColorscheme(opts.colorscheme)))
 	})
 	root.SilenceUsage = true
 	root.SilenceErrors = true
@@ -134,7 +146,7 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 
 	if err := root.ExecuteContext(ctx); err != nil {
 		w := colorprofile.NewWriter(root.ErrOrStderr(), os.Environ())
-		opts.errHandler(w, makeStyles(mustColorscheme(opts.theme)), err)
+		opts.errHandler(w, makeStyles(mustColorscheme(opts.colorscheme)), err)
 		return err //nolint:wrapcheck
 	}
 	return nil
