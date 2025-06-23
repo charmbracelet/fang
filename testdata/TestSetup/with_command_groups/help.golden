@@ -12,14 +12,24 @@
     completion [command]  Generate the autocompletion script for the specified shell
     help [command]        Help about any command
     sub-cmd               A sub command
+    sub-cmd-2             
+    sub-cmd-3             
                
   FIRST GROUP  
                
-    sub-cmd-2             A sub command
+    completion [command]  Generate the autocompletion script for the specified shell
+    help [command]        Help about any command
+    sub-cmd               A sub command
+    sub-cmd-2             
+    sub-cmd-3             
                 
   SECOND GROUP  
                 
-    sub-cmd-3             A sub command
+    completion [command]  Generate the autocompletion script for the specified shell
+    help [command]        Help about any command
+    sub-cmd               A sub command
+    sub-cmd-2             
+    sub-cmd-3             
          
   FLAGS  
          
