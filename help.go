@@ -71,11 +71,15 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
 
 	for _, groupID := range groupKeys {
 		if len(cmds[groupID]) > 0 {
-			group := cmds[""]
+			group := cmds[groupID]
 			if len(group) > 0 {
 				renderGroup(w, styles, space, groups[groupID], func(yield func(string, string) bool) {
 					for _, k := range cmdKeys {
-						if !yield(k, group[k]) {
+						cmds, ok := group[k]
+						if !ok {
+							continue
+						}
+						if !yield(k, cmds) {
 							return
 						}
 					}
@@ -346,6 +350,8 @@ func evalFlags(c *cobra.Command, styles Styles) (map[string]string, []string) {
 	return flags, keys
 }
 
+// result is map[groupID]map[styled cmd name]styled cmd help, and the keys in
+// the order they are defined.
 func evalCmds(c *cobra.Command, styles Styles) (map[string](map[string]string), []string) {
 	padStyle := lipgloss.NewStyle().PaddingLeft(0) //nolint:mnd
 	keys := []string{}
@@ -366,14 +372,10 @@ func evalCmds(c *cobra.Command, styles Styles) (map[string](map[string]string), 
 }
 
 func evalGroups(c *cobra.Command) (map[string]string, []string) {
-	groups := map[string]string{
-		"": "commands",
-	}
+	// make sure the default group is the first
 	ids := []string{""}
+	groups := map[string]string{"": "commands"}
 	for _, g := range c.Groups() {
-		if g.ID == "" {
-			continue
-		}
 		groups[g.ID] = g.Title
 		ids = append(ids, g.ID)
 	}
