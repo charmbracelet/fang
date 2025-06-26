@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/signal"
 	"runtime/debug"
 
 	"github.com/charmbracelet/colorprofile"
@@ -30,6 +31,7 @@ type settings struct {
 	commit      string
 	colorscheme ColorSchemeFunc
 	errHandler  ErrorHandler
+	signals     []os.Signal
 }
 
 // Option changes fang settings.
@@ -88,6 +90,14 @@ func WithErrorHandler(handler ErrorHandler) Option {
 	}
 }
 
+// WithNotifySignal sets the signals that should interrupt the execution of the
+// program.
+func WithNotifySignal(signals ...os.Signal) Option {
+	return func(s *settings) {
+		s.signals = signals
+	}
+}
+
 // Execute applies fang to the command and executes it.
 func Execute(ctx context.Context, root *cobra.Command, options ...Option) error {
 	opts := settings{
@@ -134,6 +144,12 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 
 	if !opts.completions {
 		root.CompletionOptions.DisableDefaultCmd = true
+	}
+
+	if len(opts.signals) > 0 {
+		var cancel context.CancelFunc
+		ctx, cancel = signal.NotifyContext(ctx, opts.signals...)
+		defer cancel()
 	}
 
 	if err := root.ExecuteContext(ctx); err != nil {

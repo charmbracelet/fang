@@ -89,6 +89,16 @@ example sub another --thing`,
 		Use:     "another",
 		Short:   "another sub command",
 		Example: `example sub another --foo=bar`,
+		RunE: func(c *cobra.Command, args []string) error {
+			cmd.Println("Working...")
+			select {
+			case <-time.After(time.Second * 5):
+				cmd.Println("Done!")
+			case <-c.Context().Done():
+				return c.Context().Err()
+			}
+			return nil
+		},
 	})
 
 	cmd.AddCommand(&cobra.Command{
@@ -104,6 +114,7 @@ example sub another --thing`,
 	if err := fang.Execute(
 		context.Background(),
 		cmd,
+		fang.WithNotifySignal(os.Interrupt, os.Kill),
 	); err != nil {
 		os.Exit(1)
 	}
