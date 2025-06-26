@@ -14,17 +14,15 @@ import (
 
 func TestSetup(t *testing.T) {
 	t.Run("simple", func(t *testing.T) {
-		exercise(t, cobra.Command{
+		exercise(t, toMkroot(&cobra.Command{
 			Use: "simple",
-		})
+		}))
 	})
 
 	t.Run("custom error handler", func(t *testing.T) {
 		doExercise(
 			t,
-			cobra.Command{
-				Use: "simple",
-			},
+			toMkroot(&cobra.Command{Use: "simple"}),
 			[]string{"nope"},
 			assertError,
 			fang.WithErrorHandler(func(w io.Writer, styles fang.Styles, err error) {
@@ -34,37 +32,37 @@ func TestSetup(t *testing.T) {
 	})
 
 	t.Run("complete", func(t *testing.T) {
-		cmd := cobra.Command{
+		cmd := toMkroot(&cobra.Command{
 			Use:   "simple",
 			Short: "Short help",
 			Long:  "Long help",
-		}
+		})
+
 		exercise(t, cmd)
 
 		t.Run("man", func(t *testing.T) {
 			doExercise(
 				t, cmd,
-				[]string{"man"},
+				[]string{"man", "-h"},
 				assertNoError,
-				fang.WithoutManpage(),
 			)
 		})
 	})
 
 	t.Run("use with args", func(t *testing.T) {
-		exercise(t, cobra.Command{
+		exercise(t, toMkroot(&cobra.Command{
 			Use:   "simple [args] [something-else]",
 			Short: "Short help",
 			Long:  "Long help",
-		})
+		}))
 	})
 
 	t.Run("without completions", func(t *testing.T) {
-		cmd := cobra.Command{
+		cmd := toMkroot(&cobra.Command{
 			Use:   "simple",
 			Short: "no completions",
 			Args:  cobra.NoArgs,
-		}
+		})
 
 		exercise(t, cmd, fang.WithoutCompletions())
 
@@ -80,11 +78,11 @@ func TestSetup(t *testing.T) {
 	})
 
 	t.Run("without manpage", func(t *testing.T) {
-		cmd := cobra.Command{
+		cmd := toMkroot(&cobra.Command{
 			Use:   "simple",
 			Short: "no manpages",
 			Args:  cobra.NoArgs,
-		}
+		})
 		exercise(t, cmd, fang.WithoutManpage())
 
 		t.Run("man", func(t *testing.T) {
@@ -99,58 +97,67 @@ func TestSetup(t *testing.T) {
 	})
 
 	t.Run("with version and hash", func(t *testing.T) {
-		exercise(t, cobra.Command{
-			Use: "simple",
-		}, fang.WithVersion("v1.2.3"), fang.WithCommit("aaabbb"))
+		exercise(
+			t,
+			toMkroot(&cobra.Command{Use: "simple"}),
+			fang.WithVersion("v1.2.3"),
+			fang.WithCommit("aaabbb"),
+		)
 	})
 
 	t.Run("with flags", func(t *testing.T) {
-		cmd := cobra.Command{
-			Use:   "simple",
-			Short: "Short help",
-			Long:  "Long help",
+		mkroot := func() *cobra.Command {
+			cmd := &cobra.Command{
+				Use:   "simple",
+				Short: "Short help",
+				Long:  "Long help",
+			}
+			cmd.Flags().String("string1", "default-value", "a string flag")
+			cmd.Flags().String("string2", "", "a string flag")
+			cmd.Flags().StringP("string3", "s", "", "a string flag")
+			cmd.Flags().Int("int1", 0, "an int flag")
+			cmd.Flags().Int("int2", 10, "an int flag")
+			cmd.Flags().IntP("int3", "i", 10, "an int flag")
+			cmd.Flags().Float64("float1", 0, "a float flag")
+			cmd.Flags().Float64("float2", 10, "a float flag")
+			cmd.Flags().Float64P("float3", "f", 10, "a float flag")
+			cmd.Flags().Bool("bool1", false, "a bool flag")
+			cmd.Flags().Bool("bool2", true, "a bool flag")
+			cmd.Flags().BoolP("bool3", "b", true, "a bool flag")
+			cmd.Flags().BoolP("hidden", "z", true, "a bool flag")
+			cmd.Flags().Bool("no-help", false, "")
+			_ = cmd.Flags().MarkHidden("hidden")
+			return cmd
 		}
-		cmd.Flags().String("string1", "default-value", "a string flag")
-		cmd.Flags().String("string2", "", "a string flag")
-		cmd.Flags().StringP("string3", "s", "", "a string flag")
-		cmd.Flags().Int("int1", 0, "an int flag")
-		cmd.Flags().Int("int2", 10, "an int flag")
-		cmd.Flags().IntP("int3", "i", 10, "an int flag")
-		cmd.Flags().Float64("float1", 0, "a float flag")
-		cmd.Flags().Float64("float2", 10, "a float flag")
-		cmd.Flags().Float64P("float3", "f", 10, "a float flag")
-		cmd.Flags().Bool("bool1", false, "a bool flag")
-		cmd.Flags().Bool("bool2", true, "a bool flag")
-		cmd.Flags().BoolP("bool3", "b", true, "a bool flag")
-		cmd.Flags().BoolP("hidden", "z", true, "a bool flag")
-		cmd.Flags().Bool("no-help", false, "")
-		_ = cmd.Flags().MarkHidden("hidden")
-		exercise(t, cmd)
+		exercise(t, mkroot)
 	})
 
 	t.Run("with subcommands", func(t *testing.T) {
-		cmd := cobra.Command{
-			Use:   "simple",
-			Short: "Short help",
+		mkroot := func() *cobra.Command {
+			cmd := &cobra.Command{
+				Use:   "simple",
+				Short: "Short help",
+			}
+			sub := &cobra.Command{
+				Use:     "sub1",
+				Short:   "a sub command",
+				Example: `simple sub1 some args`,
+			}
+			sub.AddCommand(&cobra.Command{
+				Use:     "sub2 [args]",
+				Short:   "yet another sub command",
+				Example: `simple sub1 sub2 args --help`,
+			})
+			cmd.AddCommand(sub)
+			return cmd
 		}
-		sub := &cobra.Command{
-			Use:     "sub1",
-			Short:   "a sub command",
-			Example: `simple sub1 some args`,
-		}
-		sub.AddCommand(&cobra.Command{
-			Use:     "sub2 [args]",
-			Short:   "yet another sub command",
-			Example: `simple sub1 sub2 args --help`,
-		})
-		cmd.AddCommand(sub)
 
-		exercise(t, cmd)
+		exercise(t, mkroot)
 
 		t.Run("help-sub", func(t *testing.T) {
 			doExercise(
 				t,
-				cmd,
+				mkroot,
 				[]string{"sub1", "--help"},
 				assertNoError,
 			)
@@ -159,7 +166,7 @@ func TestSetup(t *testing.T) {
 		t.Run("help-sub-sub", func(t *testing.T) {
 			doExercise(
 				t,
-				cmd,
+				mkroot,
 				[]string{"sub1", "sub2", "--help"},
 				assertNoError,
 			)
@@ -167,41 +174,44 @@ func TestSetup(t *testing.T) {
 	})
 
 	t.Run("with command groups", func(t *testing.T) {
-		cmd := cobra.Command{
-			Use:   "simple",
-			Short: "Short help",
+		mkroot := func() *cobra.Command {
+			cmd := &cobra.Command{
+				Use:   "simple",
+				Short: "Short help",
+			}
+			cmd.AddGroup(&cobra.Group{
+				ID:    "1",
+				Title: "First group",
+			})
+			cmd.AddGroup(&cobra.Group{
+				ID:    "2",
+				Title: "Second group",
+			})
+			cmd.AddCommand(&cobra.Command{
+				Use:   "sub-cmd",
+				Short: "a sub command",
+			})
+			cmd.AddCommand(&cobra.Command{
+				Use:     "sub-cmd-2",
+				Short:   "a sub command",
+				GroupID: "1",
+			})
+			cmd.AddCommand(&cobra.Command{
+				Use:     "sub-cmd-3",
+				Short:   "a sub command",
+				GroupID: "2",
+			})
+			return cmd
 		}
-		cmd.AddGroup(&cobra.Group{
-			ID:    "1",
-			Title: "First group",
-		})
-		cmd.AddGroup(&cobra.Group{
-			ID:    "2",
-			Title: "Second group",
-		})
-		cmd.AddCommand(&cobra.Command{
-			Use:   "sub-cmd",
-			Short: "a sub command",
-		})
-		cmd.AddCommand(&cobra.Command{
-			Use:     "sub-cmd-2",
-			Short:   "a sub command",
-			GroupID: "1",
-		})
-		cmd.AddCommand(&cobra.Command{
-			Use:     "sub-cmd-3",
-			Short:   "a sub command",
-			GroupID: "2",
-		})
-
-		exercise(t, cmd)
+		exercise(t, mkroot)
 	})
 
 	t.Run("with examples", func(t *testing.T) {
-		cmd := cobra.Command{
-			Use:   "simple",
-			Short: "Short help",
-			Example: `
+		mkroot := func() *cobra.Command {
+			cmd := &cobra.Command{
+				Use:   "simple",
+				Short: "Short help",
+				Example: `
 # a comment about the usage
 simple [some arguments]
 
@@ -216,22 +226,23 @@ ENV_A=0 ENV_B=0 ENV_C=0 \
     CERT_FILE=/path/to/chain.pem KEY_FILE=/path/to/key.pem \
     simple --bool1
 			`,
+			}
+			cmd.Flags().String("string1", "", "a string flag")
+			cmd.Flags().StringP("string2", "s", "", "a string flag")
+			cmd.Flags().Bool("bool1", false, "a bool flag")
+			cmd.Flags().BoolP("bool2", "b", false, "a bool flag")
+			return cmd
 		}
-
-		cmd.Flags().String("string1", "", "a string flag")
-		cmd.Flags().StringP("string2", "s", "", "a string flag")
-		cmd.Flags().Bool("bool1", false, "a bool flag")
-		cmd.Flags().BoolP("bool2", "b", false, "a bool flag")
-		exercise(t, cmd)
+		exercise(t, mkroot)
 	})
 }
 
-func exercise(t *testing.T, cmd cobra.Command, options ...fang.Option) {
+func exercise(t *testing.T, mkroot func() *cobra.Command, options ...fang.Option) {
 	t.Helper()
 
 	t.Run("error", func(t *testing.T) {
 		doExercise(
-			t, cmd,
+			t, mkroot,
 			[]string{"--nope-nope-nope"},
 			assertError,
 			options...,
@@ -240,7 +251,7 @@ func exercise(t *testing.T, cmd cobra.Command, options ...fang.Option) {
 
 	t.Run("version", func(t *testing.T) {
 		doExercise(
-			t, cmd,
+			t, mkroot,
 			[]string{"--version"},
 			assertNoError,
 			options...,
@@ -249,7 +260,7 @@ func exercise(t *testing.T, cmd cobra.Command, options ...fang.Option) {
 
 	t.Run("help", func(t *testing.T) {
 		doExercise(
-			t, cmd,
+			t, mkroot,
 			[]string{"--help"},
 			assertNoError,
 			options...,
@@ -259,7 +270,7 @@ func exercise(t *testing.T, cmd cobra.Command, options ...fang.Option) {
 
 func doExercise(
 	t *testing.T,
-	cmd cobra.Command,
+	mkroot func() *cobra.Command,
 	args []string,
 	assert func(t *testing.T, err error, stdout, stderr bytes.Buffer),
 	options ...fang.Option,
@@ -267,19 +278,22 @@ func doExercise(
 	t.Helper()
 	t.Setenv("__FANG_TEST_WIDTH", "45")
 
+	root := mkroot()
+
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
-	root := &cmd
 	root.SetOut(&stdout)
 	root.SetErr(&stderr)
 	root.SetArgs(args)
-	if target, args, _ := root.Traverse(args); target != nil {
-		target.SetOut(&stdout)
-		target.SetErr(&stderr)
-		target.SetArgs(args)
-	}
+
 	err := fang.Execute(t.Context(), root, options...)
 	assert(t, err, stdout, stderr)
+}
+
+func toMkroot(c *cobra.Command) func() *cobra.Command {
+	return func() *cobra.Command {
+		return c
+	}
 }
 
 func assertNoError(t *testing.T, err error, stdout, stderr bytes.Buffer) {

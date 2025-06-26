@@ -3,11 +3,11 @@
          
   USAGE  
          
-    simple sub2 [args] [--flags]  
+    simple sub1 sub2 [args] [--flags]  
             
   EXAMPLES  
             
-    simple sub1 sub2 args --help  
+    simple sub1 sub2 args --help       
          
   FLAGS  
          

@@ -96,18 +96,20 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 		colorscheme: DefaultColorScheme,
 		errHandler:  DefaultErrorHandler,
 	}
+
 	for _, option := range options {
 		option(&opts)
 	}
 
-	root.SetHelpFunc(func(c *cobra.Command, _ []string) {
+	helpFunc := func(c *cobra.Command, _ []string) {
 		w := colorprofile.NewWriter(c.OutOrStdout(), os.Environ())
 		helpFn(c, w, makeStyles(mustColorscheme(opts.colorscheme)))
-	})
+	}
 
 	root.SilenceUsage = true
 	root.SilenceErrors = true
 	root.Version = buildVersion(opts)
+	root.SetHelpFunc(helpFunc)
 
 	if opts.manpages {
 		root.AddCommand(&cobra.Command{

@@ -1,12 +1,11 @@
 
-  Long help                                  
+  Generates manpages                         
          
   USAGE  
          
-    simple [--flags]  
+    simple man [--flags]  
          
   FLAGS  
          
-    -h --help     Help for simple
-    -v --version  Version for simple
+    -h --help  Help for man
 
