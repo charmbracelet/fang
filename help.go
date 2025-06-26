@@ -413,6 +413,6 @@ func calculateSpace(k1, k2 []string) int {
 }
 
 func isSubCommand(c *cobra.Command, args []string, word string) bool {
-	cmd, _, _ := c.Traverse(args)
+	cmd, _, _ := c.Root().Traverse(args)
 	return cmd != nil && cmd.Name() == word
 }
