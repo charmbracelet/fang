@@ -104,8 +104,10 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 		w := colorprofile.NewWriter(c.OutOrStdout(), os.Environ())
 		helpFn(c, w, makeStyles(mustColorscheme(opts.colorscheme)))
 	})
+
 	root.SilenceUsage = true
 	root.SilenceErrors = true
+	root.Version = buildVersion(opts)
 
 	if opts.manpages {
 		root.AddCommand(&cobra.Command{
@@ -128,25 +130,9 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 		})
 	}
 
-	if opts.completions {
-		root.InitDefaultCompletionCmd()
-	} else {
+	if !opts.completions {
 		root.CompletionOptions.DisableDefaultCmd = true
 	}
-
-	if opts.version == "" {
-		if info, ok := debug.ReadBuildInfo(); ok && info.Main.Sum != "" {
-			opts.version = info.Main.Version
-			opts.commit = getKey(info, "vcs.revision")
-		} else {
-			opts.version = "unknown (built from source)"
-		}
-	}
-	if len(opts.commit) >= shaLen {
-		opts.version += " (" + opts.commit[:shaLen] + ")"
-	}
-
-	root.Version = opts.version
 
 	if err := root.ExecuteContext(ctx); err != nil {
 		w := colorprofile.NewWriter(root.ErrOrStderr(), os.Environ())
@@ -154,6 +140,23 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 		return err //nolint:wrapcheck
 	}
 	return nil
+}
+
+func buildVersion(opts settings) string {
+	commit := opts.commit
+	version := opts.version
+	if version == "" {
+		if info, ok := debug.ReadBuildInfo(); ok && info.Main.Sum != "" {
+			version = info.Main.Version
+			commit = getKey(info, "vcs.revision")
+		} else {
+			version = "unknown (built from source)"
+		}
+	}
+	if len(commit) >= shaLen {
+		version += " (" + commit[:shaLen] + ")"
+	}
+	return version
 }
 
 func getKey(info *debug.BuildInfo, key string) string {
