@@ -285,7 +285,10 @@ func styleExample(c *cobra.Command, line string, indent bool, styles Codeblock) 
 			}
 		}
 
-		cleanArgs = append(cleanArgs, arg)
+		if !isQuoteStart && !isQuotedString && !isFlagStart {
+			cleanArgs = append(cleanArgs, arg)
+		}
+
 		if !isQuoteStart && !isFlagStart && isSubCommand(c, cleanArgs, arg) {
 			args[i] = styles.Program.Command.Render(arg)
 			continue
