@@ -1,0 +1,12 @@
+a sub command
+
+Usage:
+
+Examples:
+simple sub1 some args
+
+Flags:
+  -h, --help   help for sub1
+
+Additional help topcis:
+  simple sub1 sub2 yet another sub command

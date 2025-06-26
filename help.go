@@ -173,8 +173,15 @@ func styleUsage(c *cobra.Command, styles Program, complete bool) string {
 
 	u = strings.TrimSpace(u)
 
+	programName := findProgramName(c)
 	useLine := []string{
 		styles.Name.Render(u),
+	}
+	if complete && c.Parent() != nil {
+		useLine = []string{
+			styles.Name.Render(programName),
+			styles.Command.Render(u),
+		}
 	}
 	if !complete {
 		useLine[0] = styles.Command.Render(u)
@@ -246,7 +253,7 @@ func styleExample(c *cobra.Command, line string, indent bool, styles Codeblock) 
 
 	var isQuotedString bool
 	var foundProgramName bool
-	programName := c.Name()
+	programName := findProgramName(c)
 	args := strings.Fields(line)
 	for i, arg := range args {
 		isQuoteStart := arg[0] == '"'
@@ -406,6 +413,19 @@ func calculateSpace(k1, k2 []string) int {
 		space = max(space, lipgloss.Width(k)+spaceBetween)
 	}
 	return space
+}
+
+func findProgramName(c *cobra.Command) string {
+	root := c
+	for {
+		p := root.Parent()
+		if p == nil {
+			break
+		}
+		root = p
+
+	}
+	return root.Name()
 }
 
 func isSubCommand(c *cobra.Command, arg string) bool {

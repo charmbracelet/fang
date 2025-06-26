@@ -2,7 +2,6 @@ package fang_test
 
 import (
 	"bytes"
-	"context"
 	"fmt"
 	"io"
 	"testing"
@@ -134,11 +133,37 @@ func TestSetup(t *testing.T) {
 			Use:   "simple",
 			Short: "Short help",
 		}
-		cmd.AddCommand(&cobra.Command{
-			Use:   "sub-cmd",
-			Short: "a sub command",
+		sub := &cobra.Command{
+			Use:     "sub1",
+			Short:   "a sub command",
+			Example: `simple sub1 some args`,
+		}
+		sub.AddCommand(&cobra.Command{
+			Use:     "sub2 [args]",
+			Short:   "yet another sub command",
+			Example: `simple sub1 sub2 args --help`,
 		})
+		cmd.AddCommand(sub)
+
 		exercise(t, cmd)
+
+		t.Run("help-sub", func(t *testing.T) {
+			doExercise(
+				t,
+				cmd,
+				[]string{"sub1", "--help"},
+				assertNoError,
+			)
+		})
+
+		t.Run("help-sub-sub", func(t *testing.T) {
+			doExercise(
+				t,
+				cmd,
+				[]string{"sub1", "sub2", "--help"},
+				assertNoError,
+			)
+		})
 	})
 
 	t.Run("with command groups", func(t *testing.T) {
@@ -241,13 +266,19 @@ func doExercise(
 ) {
 	t.Helper()
 	t.Setenv("__FANG_TEST_WIDTH", "45")
-	root := &cmd
+
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
+	root := &cmd
 	root.SetOut(&stdout)
 	root.SetErr(&stderr)
 	root.SetArgs(args)
-	err := fang.Execute(context.Background(), root, options...)
+	if target, args, _ := root.Traverse(args); target != nil {
+		target.SetOut(&stdout)
+		target.SetErr(&stderr)
+		target.SetArgs(args)
+	}
+	err := fang.Execute(t.Context(), root, options...)
 	assert(t, err, stdout, stderr)
 }
 
