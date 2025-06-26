@@ -250,7 +250,7 @@ func styleExample(c *cobra.Command, line string, indent bool, styles Codeblock) 
 	var foundProgramName bool
 	programName := c.Root().Name()
 	args := strings.Fields(line)
-	var cleanArgs []string
+	var cleanArgs []string //nolint:prealloc
 	for i, arg := range args {
 		isQuoteStart := arg[0] == '"'
 		isQuoteEnd := arg[len(arg)-1] == '"'
