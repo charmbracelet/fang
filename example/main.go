@@ -89,7 +89,7 @@ example sub another --thing`,
 		Use:     "another",
 		Short:   "another sub command",
 		Example: `example sub another --foo=bar`,
-		RunE: func(c *cobra.Command, args []string) error {
+		RunE: func(c *cobra.Command, _ []string) error {
 			cmd.Println("Working...")
 			select {
 			case <-time.After(time.Second * 5):
