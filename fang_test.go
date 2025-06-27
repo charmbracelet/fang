@@ -225,6 +225,14 @@ simple --string1=2 -s abc -b --bool1 --flag-not-found [args]
 ENV_A=0 ENV_B=0 ENV_C=0 \
     CERT_FILE=/path/to/chain.pem KEY_FILE=/path/to/key.pem \
     simple --bool1
+
+# pipe example:
+echo "foo" | example
+
+# another pipe example:
+echo 'foo' |
+  example sub |
+  cat -
 			`,
 			}
 			cmd.Flags().String("string1", "", "a string flag")
