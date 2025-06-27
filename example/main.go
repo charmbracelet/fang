@@ -47,8 +47,15 @@ ENV_A=0 ENV_B=0 ENV_C=0 \
 
 # Run a subcommand's subcommand with an argument:
 example sub another args --flag
-		`,
 
+# Pipe example:
+echo "foo" | example
+
+# Another pipe example:
+echo 'foo' |
+  example sub |
+  cat -
+		`,
 		RunE: func(c *cobra.Command, _ []string) error {
 			if eerr {
 				return errors.New("we have an error")

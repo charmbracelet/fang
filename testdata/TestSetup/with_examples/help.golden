@@ -20,6 +20,14 @@
     ENV_A=0 ENV_B=0 ENV_C=0 \              
       CERT_FILE=/path/to/chain.pem KEY_F…  
       simple --bool1                       
+                                           
+    # pipe example:                        
+    echo "foo" |  example                  
+                                           
+    # another pipe example:                
+    echo 'foo' |                           
+      example  sub |                       
+      cat -                                
             
   COMMANDS  
             

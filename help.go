@@ -228,7 +228,7 @@ func styleExamples(c *cobra.Command, styles Styles) []string {
 		}
 		s := styleExample(c, line, indent, styles.Codeblock)
 		usage = append(usage, s)
-		indent = len(line) > 1 && line[len(line)-1] == '\\'
+		indent = len(line) > 1 && (line[len(line)-1] == '\\' || line[len(line)-1] == '|')
 	}
 
 	return usage
@@ -256,13 +256,24 @@ func styleExample(c *cobra.Command, line string, indent bool, styles Codeblock) 
 	args := strings.Fields(line)
 	var cleanArgs []string
 	for i, arg := range args {
-		isQuoteStart := arg[0] == '"'
-		isQuoteEnd := arg[len(arg)-1] == '"'
-		isFlagStart := arg[0] == '-'
+		isQuoteStart := arg[0] == '"' || arg[0] == '\''
+		isQuoteEnd := arg[len(arg)-1] == '"' || arg[len(arg)-1] == '\''
+		isFlag := arg[0] == '-'
 
-		if i == len(args)-1 && len(arg) == 1 && arg[0] == '\\' {
-			args[i] = styles.Program.DimmedArgument.UnsetPadding().Render(arg)
-			continue
+		if len(arg) == 1 {
+			switch arg[0] {
+			case '\\':
+				if i == len(args)-1 {
+					args[i] = styles.Program.DimmedArgument.UnsetPadding().Render(arg)
+					continue
+				}
+			case '|':
+				args[i] = styles.Program.DimmedArgument.PaddingRight(1).Render(arg)
+				continue
+			case '-':
+				args[i] = styles.Program.Argument.PaddingRight(1).Render(arg)
+				continue
+			}
 		}
 
 		if !foundProgramName { //nolint:nestif
@@ -289,11 +300,11 @@ func styleExample(c *cobra.Command, line string, indent bool, styles Codeblock) 
 			}
 		}
 
-		if !isQuoteStart && !isQuotedString && !isFlagStart {
+		if !isQuoteStart && !isQuotedString && !isFlag {
 			cleanArgs = append(cleanArgs, arg)
 		}
 
-		if !isQuoteStart && !isFlagStart && isSubCommand(c, cleanArgs, arg) {
+		if !isQuoteStart && !isFlag && isSubCommand(c, cleanArgs, arg) {
 			args[i] = styles.Program.Command.Render(arg)
 			continue
 		}
@@ -304,7 +315,7 @@ func styleExample(c *cobra.Command, line string, indent bool, styles Codeblock) 
 			continue
 		}
 		// handle a flag
-		if arg[0] == '-' {
+		if isFlag {
 			name, value, ok := strings.Cut(arg, "=")
 			// it is --flag=value
 			if ok {
@@ -322,7 +333,15 @@ func styleExample(c *cobra.Command, line string, indent bool, styles Codeblock) 
 			)
 			continue
 		}
-		args[i] = styles.Program.Argument.Render(arg)
+
+		argStyle := styles.Program.Argument
+		if indent {
+			argStyle = argStyle.PaddingLeft(2)
+		}
+		if !foundProgramName && !indent && i == 0 {
+			argStyle = argStyle.PaddingLeft(0)
+		}
+		args[i] = argStyle.Render(arg)
 	}
 
 	return lipgloss.JoinHorizontal(
