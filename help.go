@@ -108,6 +108,12 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
 
 // DefaultErrorHandler is the default [ErrorHandler] implementation.
 func DefaultErrorHandler(w io.Writer, styles Styles, err error) {
+	if !term.IsTerminal(os.Stderr.Fd()) {
+		// if stderr is not a tty, simply print the error:
+		fmt.Fprintln(w, err.Error())
+		return
+	}
+
 	_, _ = fmt.Fprintln(w, styles.ErrorHeader.String())
 	_, _ = fmt.Fprintln(w, styles.ErrorText.Render(err.Error()+"."))
 	_, _ = fmt.Fprintln(w)
