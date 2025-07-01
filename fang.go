@@ -11,6 +11,7 @@ import (
 
 	"github.com/charmbracelet/colorprofile"
 	"github.com/charmbracelet/lipgloss/v2"
+	"github.com/charmbracelet/x/term"
 	mango "github.com/muesli/mango-cobra"
 	"github.com/muesli/roff"
 	"github.com/spf13/cobra"
@@ -19,6 +20,9 @@ import (
 const shaLen = 7
 
 // ErrorHandler handles an error, printing them to the given [io.Writer].
+//
+// Note that this will only be used if the STDERR is a terminal, and should
+// be used for styling only.
 type ErrorHandler = func(w io.Writer, styles Styles, err error)
 
 // ColorSchemeFunc gets a [lipgloss.LightDarkFunc] and returns a [ColorScheme].
@@ -153,6 +157,13 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 	}
 
 	if err := root.ExecuteContext(ctx); err != nil {
+		if t, ok := root.ErrOrStderr().(term.File); ok {
+			if !term.IsTerminal(t.Fd()) {
+				// if stderr is not a tty, simply print the error:
+				fmt.Fprintln(root.ErrOrStderr(), err.Error())
+				return err
+			}
+		}
 		w := colorprofile.NewWriter(root.ErrOrStderr(), os.Environ())
 		opts.errHandler(w, makeStyles(mustColorscheme(opts.colorscheme)), err)
 		return err //nolint:wrapcheck
