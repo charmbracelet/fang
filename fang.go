@@ -157,10 +157,11 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 	}
 
 	if err := root.ExecuteContext(ctx); err != nil {
-		if t, ok := root.ErrOrStderr().(term.File); ok {
-			if !term.IsTerminal(t.Fd()) {
-				// if stderr is not a tty, simply print the error:
-				fmt.Fprintln(root.ErrOrStderr(), err.Error())
+		if w, ok := root.ErrOrStderr().(term.File); ok {
+			// if stderr is not a tty, simply print the error without any
+			// styling or going through an [ErrorHandler]:
+			if !term.IsTerminal(w.Fd()) {
+				fmt.Fprintln(w, err.Error())
 				return err
 			}
 		}
