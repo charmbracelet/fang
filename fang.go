@@ -2,6 +2,7 @@
 package fang
 
 import (
+	"cmp"
 	"context"
 	"fmt"
 	"io"
@@ -156,7 +157,10 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 		defer cancel()
 	}
 
-	if err := root.ExecuteContext(ctx); err != nil {
+	if err := cmp.Or(
+		root.ExecuteContext(ctx),
+		ctx.Err(),
+	); err != nil {
 		if w, ok := root.ErrOrStderr().(term.File); ok {
 			// if stderr is not a tty, simply print the error without any
 			// styling or going through an [ErrorHandler]:

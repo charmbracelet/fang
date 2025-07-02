@@ -60,6 +60,12 @@ echo 'foo' |
 			if eerr {
 				return errors.New("we have an error")
 			}
+
+			c.Println("Processing... press ctrl-c to cancel.")
+			select {
+			case <-time.After(10 * time.Second):
+			case <-c.Context().Done():
+			}
 			c.Println("You ran the root command. Now try --help.")
 			return nil
 		},
