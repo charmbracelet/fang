@@ -161,8 +161,8 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 			// if stderr is not a tty, simply print the error without any
 			// styling or going through an [ErrorHandler]:
 			if !term.IsTerminal(w.Fd()) {
-				fmt.Fprintln(w, err.Error())
-				return err
+				_, _ = fmt.Fprintln(w, err.Error())
+				return err //nolint:wrapcheck
 			}
 		}
 		w := colorprofile.NewWriter(root.ErrOrStderr(), os.Environ())
