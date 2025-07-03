@@ -81,7 +81,7 @@ func WithVersion(version string) Option {
 	}
 }
 
-// WithoutVersion skips the `-v,--version` functionality
+// WithoutVersion skips the `-v`/`--version` functionality.
 func WithoutVersion() Option {
 	return func(s *settings) {
 		s.skipVersion = true
