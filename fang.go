@@ -31,6 +31,7 @@ type ColorSchemeFunc = func(lipgloss.LightDarkFunc) ColorScheme
 type settings struct {
 	completions bool
 	manpages    bool
+	skipVersion bool
 	version     string
 	commit      string
 	colorscheme ColorSchemeFunc
@@ -80,6 +81,13 @@ func WithVersion(version string) Option {
 	}
 }
 
+// WithoutVersion skips the `-v,--version` functionality
+func WithoutVersion() Option {
+	return func(s *settings) {
+		s.skipVersion = true
+	}
+}
+
 // WithCommit sets the commit SHA.
 func WithCommit(commit string) Option {
 	return func(s *settings) {
@@ -122,7 +130,9 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 
 	root.SilenceUsage = true
 	root.SilenceErrors = true
-	root.Version = buildVersion(opts)
+	if !opts.skipVersion {
+		root.Version = buildVersion(opts)
+	}
 	root.SetHelpFunc(helpFunc)
 
 	if opts.manpages {
