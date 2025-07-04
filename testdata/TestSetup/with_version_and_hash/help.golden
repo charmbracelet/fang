@@ -1,15 +1,15 @@
          
   USAGE  
          
-    simple [command] [--flags]  
+    simple [command] [--flags]  
             
   COMMANDS  
             
-    completion [command]  Generate the autocompletion script for the specified shell
-    help [command]        Help about any command
+    completion [command]  Generate the autocompletion script for the specified shell
+    help [command]        Help about any command
          
   FLAGS  
          
-    -h --help             Help for simple
-    -v --version          Version for simple
+    -h --help             Help for simple
+    -v --version          Version for simple
 
