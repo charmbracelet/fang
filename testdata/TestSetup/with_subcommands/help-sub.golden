@@ -3,17 +3,17 @@
          
   USAGE  
          
-    simple sub1 [--flags]  
+    simple sub1 [--flags]  
             
   EXAMPLES  
             
-    simple sub1 some args  
+    simple sub1 some args  
             
   COMMANDS  
             
-    sub2 [args]  Yet another sub command
+    sub2 [args]  Yet another sub command
          
   FLAGS  
          
-    -h --help    Help for sub1
+    -h --help    Help for sub1
 

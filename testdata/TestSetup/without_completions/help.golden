@@ -3,14 +3,14 @@
          
   USAGE  
          
-    simple [--flags]  
+    simple [--flags]  
             
   COMMANDS  
             
-    help [command]  Help about any command
+    help [command]  Help about any command
          
   FLAGS  
          
-    -h --help       Help for simple
-    -v --version    Version for simple
+    -h --help       Help for simple
+    -v --version    Version for simple
 

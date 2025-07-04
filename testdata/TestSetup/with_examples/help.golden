@@ -3,43 +3,43 @@
          
   USAGE  
          
-    simple [command] [--flags]             
+    simple [command] [--flags]             
             
   EXAMPLES  
             
     # a comment about the usage            
-    simple [some arguments]                
+    simple [some arguments]                
                                            
     # with environment variables           
-    FOO=bar BAR="quoted string" simple -b  
+    FOO=bar BAR="quoted string" simple -b  
                                            
     # another comment                      
-    simple --string1=2 -s abc -b --bool1…  
+    simple --string1=2 -s abc -b --bool1…  
                                            
     # multi line example:                  
-    ENV_A=0 ENV_B=0 ENV_C=0 \              
-      CERT_FILE=/path/to/chain.pem KEY_F…  
-      simple --bool1                       
+    ENV_A=0 ENV_B=0 ENV_C=0 \              
+      CERT_FILE=/path/to/chain.pem KEY_F…  
+      simple --bool1                       
                                            
     # pipe example:                        
-    echo "foo" |  example                  
+    echo "foo" | example                   
                                            
     # another pipe example:                
-    echo 'foo' |                           
-      example  sub |                       
-      cat -                                
+    echo 'foo' |                           
+      example sub |                        
+      cat -                                
             
   COMMANDS  
             
-    completion [command]  Generate the autocompletion script for the specified shell
-    help [command]        Help about any command
+    completion [command]  Generate the autocompletion script for the specified shell
+    help [command]        Help about any command
          
   FLAGS  
          
     --bool1               A bool flag
-    -b --bool2            A bool flag
-    -h --help             Help for simple
+    -b --bool2            A bool flag
+    -h --help             Help for simple
     --string1             A string flag
-    -s --string2          A string flag
-    -v --version          Version for simple
+    -s --string2          A string flag
+    -v --version          Version for simple
 

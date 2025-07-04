@@ -134,8 +134,7 @@ func makeStyles(cs ColorScheme) Styles {
 			Foreground(cs.Description).
 			Transform(titleFirstWord),
 		FlagDefault: lipgloss.NewStyle().
-			Foreground(cs.FlagDefault).
-			PaddingLeft(1),
+			Foreground(cs.FlagDefault),
 		Codeblock: Codeblock{
 			Base: lipgloss.NewStyle().
 				Background(cs.Codeblock).
@@ -152,23 +151,18 @@ func makeStyles(cs ColorScheme) Styles {
 					Background(cs.Codeblock).
 					Foreground(cs.Program),
 				Flag: lipgloss.NewStyle().
-					PaddingLeft(1).
 					Background(cs.Codeblock).
 					Foreground(cs.Flag),
 				Argument: lipgloss.NewStyle().
-					PaddingLeft(1).
 					Background(cs.Codeblock).
 					Foreground(cs.Argument),
 				DimmedArgument: lipgloss.NewStyle().
-					PaddingLeft(1).
 					Background(cs.Codeblock).
 					Foreground(cs.DimmedArgument),
 				Command: lipgloss.NewStyle().
-					PaddingLeft(1).
 					Background(cs.Codeblock).
 					Foreground(cs.Command),
 				QuotedString: lipgloss.NewStyle().
-					PaddingLeft(1).
 					Background(cs.Codeblock).
 					Foreground(cs.QuotedString),
 			},
@@ -177,18 +171,14 @@ func makeStyles(cs ColorScheme) Styles {
 			Name: lipgloss.NewStyle().
 				Foreground(cs.Program),
 			Argument: lipgloss.NewStyle().
-				PaddingLeft(1).
 				Foreground(cs.Argument),
 			DimmedArgument: lipgloss.NewStyle().
-				PaddingLeft(1).
 				Foreground(cs.DimmedArgument),
 			Flag: lipgloss.NewStyle().
-				PaddingLeft(1).
 				Foreground(cs.Flag),
 			Command: lipgloss.NewStyle().
 				Foreground(cs.Command),
 			QuotedString: lipgloss.NewStyle().
-				PaddingLeft(1).
 				Foreground(cs.QuotedString),
 		},
 		Span: lipgloss.NewStyle().
