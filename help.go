@@ -448,7 +448,7 @@ func isSubCommand(c *cobra.Command, args []string, word string) bool {
 
 func isRedirect(s string) bool {
 	for _, p := range []string{
-		">", "<", "&>", "2>", "1>",
+		">", "<", "&>", "2>", "1>", ">>", "2>>",
 	} {
 		if strings.HasPrefix(s, p) {
 			return true
