@@ -3,28 +3,46 @@
          
   USAGE  
          
-    simple [command] [--flags]             
+    example [command] [--flags]            
             
   EXAMPLES  
             
-    # a comment about the usage            
-    simple [some arguments]                
+    # Run it:                              
+    example                                
                                            
-    # with environment variables           
-    FOO=bar BAR="quoted string" simple -b  
+    # Run it with some arguments:          
+    FOO=bar ZAZ="quoted value" example -…  
                                            
-    # another comment                      
-    simple --string1=2 -s abc -b --bool1…  
+    # Run a subcommand with an argument:   
+    example sub --async --name=xyz --asy…  
                                            
-    # multi line example:                  
+    # Run with a quoted string:            
+    example sub "quoted string"            
+                                           
+    # Mix and match:                       
+    example sub "multi-word quoted strin…  
+                                           
+    # Multi-line:                          
     ENV_A=0 ENV_B=0 ENV_C=0 \              
       CERT_FILE=/path/to/chain.pem KEY_F…  
-      simple --bool1                       
+      example sub "quoted argument"        
                                            
-    # pipe example:                        
-    echo "foo" | example                   
+    # Run a subcommand's subcommand with…  
+    example sub another args --async       
                                            
-    # another pipe example:                
+    # Pipe example:                        
+    echo "foo" | example > bar.txt         
+                                           
+    # Redirects:                           
+    example < in.txt > out.txt             
+    example 2>&1 1>/dev/null               
+    example 1>&2 2>/dev/null               
+                                           
+    # And / Or:                            
+    foo || example                         
+    example && foo                         
+                                           
+    # Another pipe example:                
     echo 'foo' |                           
       example sub |                        
       cat -                                
@@ -33,13 +51,13 @@
             
     completion [command]  Generate the autocompletion script for the specified shell
     help [command]        Help about any command
+    sub                   A sub command
          
   FLAGS  
          
-    --bool1               A bool flag
-    -b --bool2            A bool flag
-    -h --help             Help for simple
-    --string1             A string flag
-    -s --string2          A string flag
-    -v --version          Version for simple
+    -a --async            Async?
+    -h --help             Help for example
+    --name                The name
+    -s --surname          The surname
+    -v --version          Version for example
 

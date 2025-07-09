@@ -49,7 +49,16 @@ ENV_A=0 ENV_B=0 ENV_C=0 \
 example sub another args --flag
 
 # Pipe example:
-echo "foo" | example
+echo "foo" | example > bar.txt
+
+# Redirects:
+example < in.txt > out.txt
+example 2>&1 1>/dev/null
+example 1>&2 2>/dev/null
+
+# And / Or:
+foo || example
+example && foo
 
 # Another pipe example:
 echo 'foo' |

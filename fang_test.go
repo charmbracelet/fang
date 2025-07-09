@@ -219,36 +219,62 @@ func TestSetup(t *testing.T) {
 	t.Run("with examples", func(t *testing.T) {
 		mkroot := func() *cobra.Command {
 			cmd := &cobra.Command{
-				Use:   "simple",
+				Use:   "example",
 				Short: "Short help",
 				Example: `
-# a comment about the usage
-simple [some arguments]
+# Run it:
+example
 
-# with environment variables
-FOO=bar BAR="quoted string" simple -b
+# Run it with some arguments:
+FOO=bar ZAZ="quoted value" example --name=Carlos -a -s Becker -a
 
-# another comment
-simple --string1=2 -s abc -b --bool1 --flag-not-found [args]
+# Run a subcommand with an argument:
+example sub --async --name=xyz --async arguments
 
-# multi line example:
+# Run with a quoted string:
+example sub "quoted string"
+
+# Mix and match:
+example sub "multi-word quoted string" --name "another quoted string" -a
+
+# Multi-line:
 ENV_A=0 ENV_B=0 ENV_C=0 \
-    CERT_FILE=/path/to/chain.pem KEY_FILE=/path/to/key.pem \
-    simple --bool1
+  CERT_FILE=/path/to/chain.pem KEY_FILE=/path/to/key.pem \
+  example sub "quoted argument"
 
-# pipe example:
-echo "foo" | example
+# Run a subcommand's subcommand with an argument:
+example sub another args --async
 
-# another pipe example:
+# Pipe example:
+echo "foo" | example > bar.txt
+
+# Redirects:
+example < in.txt > out.txt
+example 2>&1 1>/dev/null
+example 1>&2 2>/dev/null
+
+# And / Or:
+foo || example
+example && foo
+
+# Another pipe example:
 echo 'foo' |
   example sub |
   cat -
 			`,
 			}
-			cmd.Flags().String("string1", "", "a string flag")
-			cmd.Flags().StringP("string2", "s", "", "a string flag")
-			cmd.Flags().Bool("bool1", false, "a bool flag")
-			cmd.Flags().BoolP("bool2", "b", false, "a bool flag")
+			sub := &cobra.Command{
+				Use:   "sub",
+				Short: "a sub command",
+			}
+			cmd.AddCommand(sub)
+			sub.AddCommand(&cobra.Command{
+				Use:   "another",
+				Short: "Another sub command",
+			})
+			cmd.Flags().String("name", "", "the name")
+			cmd.Flags().StringP("surname", "s", "", "the surname")
+			cmd.Flags().BoolP("async", "a", false, "async?")
 			return cmd
 		}
 		exercise(t, mkroot)

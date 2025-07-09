@@ -244,6 +244,7 @@ func styleExample(c *cobra.Command, line string, indent bool, styles Codeblock) 
 
 	var isQuotedString bool
 	var foundProgramName bool
+	var isRedirecting bool
 	programName := c.Root().Name()
 	args := strings.Fields(line)
 	var cleanArgs []string
@@ -263,20 +264,27 @@ func styleExample(c *cobra.Command, line string, indent bool, styles Codeblock) 
 			args[i] = styles.Program.DimmedArgument.Render(" ")
 		}
 
-		if len(arg) == 1 {
-			switch arg[0] {
-			case '\\':
-				if i == len(args)-1 {
-					args[i] += styles.Program.DimmedArgument.Render(arg)
-					continue
-				}
-			case '|':
+		if isRedirecting {
+			args[i] += styles.Program.DimmedArgument.Render(arg)
+			isRedirecting = false
+			continue
+		}
+
+		switch arg {
+		case "\\":
+			if i == len(args)-1 {
 				args[i] += styles.Program.DimmedArgument.Render(arg)
 				continue
-			case '-':
-				args[i] += styles.Program.Argument.Render(arg)
-				continue
 			}
+		case "|", "||", "-", "&", "&&":
+			args[i] += styles.Program.DimmedArgument.Render(arg)
+			continue
+		}
+
+		if isRedirect(arg) {
+			args[i] += styles.Program.DimmedArgument.Render(arg)
+			isRedirecting = true
+			continue
 		}
 
 		if !foundProgramName { //nolint:nestif
@@ -436,4 +444,15 @@ func calculateSpace(k1, k2 []string) int {
 func isSubCommand(c *cobra.Command, args []string, word string) bool {
 	cmd, _, _ := c.Root().Traverse(args)
 	return cmd != nil && cmd.Name() == word
+}
+
+func isRedirect(s string) bool {
+	for _, p := range []string{
+		">", "<", "&>", "2>", "1>",
+	} {
+		if strings.HasPrefix(s, p) {
+			return true
+		}
+	}
+	return false
 }
