@@ -379,7 +379,7 @@ func evalFlags(c *cobra.Command, styles Styles) (map[string]string, []string) {
 			help = lipgloss.JoinHorizontal(
 				lipgloss.Left,
 				help,
-				styles.FlagDefault.Render("("+f.DefValue+")"),
+				styles.FlagDefault.Render(" ("+f.DefValue+")"),
 			)
 		}
 		flags[key] = help
