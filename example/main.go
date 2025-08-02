@@ -92,10 +92,13 @@ echo 'foo' |
 	})
 	sub := &cobra.Command{
 		Use:     "sub [command] [flags] [args]",
+		Aliases: []string{"s", "subcommand"},
 		Short:   "An example subcommand",
 		GroupID: "group1",
 		Example: `example sub some arguments --and-flags
-example sub another --thing`,
+example sub another --thing
+example s another --thing
+example subcommand some --flags`,
 		Run: func(c *cobra.Command, _ []string) {
 			c.Println("Ran the sub command!")
 		},
@@ -119,8 +122,12 @@ example sub another --thing`,
 
 	cmd.AddCommand(&cobra.Command{
 		Use:     "throw",
+		Aliases: []string{"err", "error"},
 		Short:   "Throws an error",
 		GroupID: "group1",
+		Example: `example throw
+example err
+example error`,
 		RunE: func(*cobra.Command, []string) error {
 			return errors.New("a super long error string that is meant to test the error handling in fang. It should be long enough to wrap around and test the error styling and formatting capabilities of fang. This is a test to see how well fang handles long error messages and whether it can display them properly without breaking the layout or causing any issues")
 		},
