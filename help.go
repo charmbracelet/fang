@@ -361,16 +361,34 @@ func evalFlags(c *cobra.Command, styles Styles) (map[string]string, []string) {
 		if f.Hidden {
 			return
 		}
+		// rename types to have parity with cobra
+		var typeStr string
+		switch t := f.Value.Type(); t {
+		case "bool":
+			typeStr = ""
+		case "float64":
+			typeStr = "float"
+		case "stringSlice":
+			typeStr = "strings"
+		case "intSlice":
+			typeStr = "ints"
+		default:
+			typeStr = t
+		}
+		if typeStr != "" {
+			typeStr = " " + typeStr
+		}
+
 		var parts []string
 		if f.Shorthand == "" {
 			parts = append(
 				parts,
-				styles.Program.Flag.Render("--"+f.Name),
+				styles.Program.Flag.Render("--"+f.Name)+styles.Program.DimmedArgument.Render(typeStr),
 			)
 		} else {
 			parts = append(
 				parts,
-				styles.Program.Flag.Render("-"+f.Shorthand+" --"+f.Name),
+				styles.Program.Flag.Render("-"+f.Shorthand+" --"+f.Name)+styles.Program.DimmedArgument.Render(typeStr),
 			)
 		}
 		key := lipgloss.JoinHorizontal(lipgloss.Left, parts...)
