@@ -125,9 +125,18 @@ func TestSetup(t *testing.T) {
 			cmd.Flags().String("string1", "default-value", "a string flag")
 			cmd.Flags().String("string2", "", "a string flag")
 			cmd.Flags().StringP("string3", "s", "", "a string flag")
+			cmd.Flags().StringSlice("slice1", nil, "a string slice flag")
+			cmd.Flags().StringSlice("slice2", []string{"a", "b", "c"}, "a string slice flag with default values")
+			cmd.Flags().StringSliceP("slice3", "l", nil, "a string slice flag")
+			cmd.Flags().StringArray("array1", nil, "a string array flag")
+			cmd.Flags().StringArray("array2", []string{"x", "y", "z"}, "a string array flag with default values")
+			cmd.Flags().StringArrayP("array3", "n", nil, "a string array flag")
 			cmd.Flags().Int("int1", 0, "an int flag")
 			cmd.Flags().Int("int2", 10, "an int flag")
 			cmd.Flags().IntP("int3", "i", 10, "an int flag")
+			cmd.Flags().IntSlice("int-slice1", nil, "an int slice flag")
+			cmd.Flags().IntSlice("int-slice3", []int{1, 2, 3}, "an int slice flag with default values")
+			cmd.Flags().IntSliceP("int-slice2", "j", nil, "an int slice flag")
 			cmd.Flags().Float64("float1", 0, "a float flag")
 			cmd.Flags().Float64("float2", 10, "a float flag")
 			cmd.Flags().Float64P("float3", "f", 10, "a float flag")
@@ -136,6 +145,7 @@ func TestSetup(t *testing.T) {
 			cmd.Flags().BoolP("bool3", "b", true, "a bool flag")
 			cmd.Flags().BoolP("hidden", "z", true, "a bool flag")
 			cmd.Flags().Bool("no-help", false, "")
+
 			_ = cmd.Flags().MarkHidden("hidden")
 			return cmd
 		}

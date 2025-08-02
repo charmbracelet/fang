@@ -7,24 +7,33 @@
             
   COMMANDS  
             
-    completion [command]  Generate the autocompletion script for the specified shell
-    help [command]        Help about any command
+    completion [command]     Generate the autocompletion script for the specified shell
+    help [command]           Help about any command
          
   FLAGS  
          
-    --bool1               A bool flag
-    --bool2               A bool flag(true)
-    -b --bool3            A bool flag(true)
-    --float1              A float flag
-    --float2              A float flag(10)
-    -f --float3           A float flag(10)
-    -h --help             Help for simple
-    --int1                An int flag
-    --int2                An int flag(10)
-    -i --int3             An int flag(10)
-    --no-help             
-    --string1             A string flag(default-value)
-    --string2             A string flag
-    -s --string3          A string flag
-    -v --version          Version for simple
+    --array1 stringArray     A string array flag
+    --array2 stringArray     A string array flag with default values([x,y,z])
+    -n --array3 stringArray  A string array flag
+    --bool1                  A bool flag
+    --bool2                  A bool flag(true)
+    -b --bool3               A bool flag(true)
+    --float1 float           A float flag
+    --float2 float           A float flag(10)
+    -f --float3 float        A float flag(10)
+    -h --help                Help for simple
+    --int-slice1 ints        An int slice flag
+    -j --int-slice2 ints     An int slice flag
+    --int-slice3 ints        An int slice flag with default values([1,2,3])
+    --int1 int               An int flag
+    --int2 int               An int flag(10)
+    -i --int3 int            An int flag(10)
+    --no-help                
+    --slice1 strings         A string slice flag
+    --slice2 strings         A string slice flag with default values([a,b,c])
+    -l --slice3 strings      A string slice flag
+    --string1 string         A string flag(default-value)
+    --string2 string         A string flag
+    -s --string3 string      A string flag
+    -v --version             Version for simple
 
