@@ -249,6 +249,9 @@ func styleExample(c *cobra.Command, line string, indent bool, styles Codeblock) 
 	args := strings.Fields(line)
 	var cleanArgs []string
 	for i, arg := range args {
+		if len(arg) == 0 {
+			continue
+		}
 		isQuoteStart := arg[0] == '"' || arg[0] == '\''
 		isQuoteEnd := arg[len(arg)-1] == '"' || arg[len(arg)-1] == '\''
 		isFlag := arg[0] == '-'
@@ -311,13 +314,17 @@ func styleExample(c *cobra.Command, line string, indent bool, styles Codeblock) 
 			}
 		}
 
-		if !isQuoteStart && !isQuotedString && !isFlag {
-			cleanArgs = append(cleanArgs, arg)
+		if !isQuoteStart && !isFlag && (isSubCommand(c, cleanArgs, arg) || isCommandAlias(c, cleanArgs, arg)) {
+			args[i] += styles.Program.Command.Render(arg)
+			// Add to cleanArgs after coloring as a command
+			if !isQuotedString {
+				cleanArgs = append(cleanArgs, arg)
+			}
+			continue
 		}
 
-		if !isQuoteStart && !isFlag && isSubCommand(c, cleanArgs, arg) {
-			args[i] += styles.Program.Command.Render(arg)
-			continue
+		if !isQuoteStart && !isQuotedString && !isFlag {
+			cleanArgs = append(cleanArgs, arg)
 		}
 		isQuotedString = isQuotedString || isQuoteStart
 		if isQuotedString {
@@ -443,7 +450,61 @@ func calculateSpace(k1, k2 []string) int {
 
 func isSubCommand(c *cobra.Command, args []string, word string) bool {
 	cmd, _, _ := c.Root().Traverse(args)
-	return cmd != nil && cmd.Name() == word
+	if cmd == nil {
+		return false
+	}
+
+	// Check if word is a subcommand of the traversed command
+	for _, subCmd := range cmd.Commands() {
+		if subCmd.Hidden {
+			continue
+		}
+		if subCmd.Name() == word {
+			return true
+		}
+	}
+	return false
+}
+
+// isCommandAlias checks if a word is an alias for any command
+func isCommandAlias(c *cobra.Command, args []string, word string) bool {
+	// Start from the root and traverse to find the correct command context
+	root := c.Root()
+	cmd, _, _ := root.Traverse(args)
+	if cmd == nil {
+		cmd = root
+	}
+
+	// Check all commands at this level for aliases
+	for _, subCmd := range cmd.Commands() {
+		if subCmd.Hidden {
+			continue
+		}
+		// Check if word matches any alias of this command
+		for _, alias := range subCmd.Aliases {
+			if alias == word {
+				return true
+			}
+		}
+	}
+
+	// Also check the root level commands if we're not at the root
+	// This is important for commands showing examples with root-level aliases
+	if cmd != root {
+		for _, subCmd := range root.Commands() {
+			if subCmd.Hidden {
+				continue
+			}
+			// Check if word matches any alias of root-level commands
+			for _, alias := range subCmd.Aliases {
+				if alias == word {
+					return true
+				}
+			}
+		}
+	}
+
+	return false
 }
 
 var redirectPrefixes = []string{">", "<", "&>", "2>", "1>", ">>", "2>>"}
