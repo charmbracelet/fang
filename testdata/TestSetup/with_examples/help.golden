@@ -57,7 +57,7 @@
          
     -a --async            Async?
     -h --help             Help for example
-    --name                The name
-    -s --surname          The surname
+    --name string         The name
+    -s --surname string   The surname
     -v --version          Version for example
 
