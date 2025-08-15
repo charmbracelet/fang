@@ -37,6 +37,11 @@ example sub --async --foo=xyz --async arguments
 # Run with a quoted string:
 example sub "quoted string"
 
+# Subcommand aliases:
+example s "subcommand alias"
+example subcommand "subcommand alias"
+example s another --thing
+
 # Mix and match:
 example sub "multi-word quoted string" --name "another quoted string" -a
 
@@ -92,6 +97,7 @@ echo 'foo' |
 	})
 	sub := &cobra.Command{
 		Use:     "sub [command] [flags] [args]",
+		Aliases: []string{"subcommand", "s"},
 		Short:   "An example subcommand",
 		GroupID: "group1",
 		Example: `example sub some arguments --and-flags
@@ -102,9 +108,13 @@ example sub another --thing`,
 	}
 	cmd.AddCommand(sub)
 	sub.AddCommand(&cobra.Command{
-		Use:     "another",
-		Short:   "another sub command",
-		Example: `example sub another --foo=bar`,
+		Use:   "another",
+		Short: "another sub command",
+		Example: `
+example sub another --foo=bar
+example subcommand "subcommand alias"
+example s another --thing
+`,
 		RunE: func(c *cobra.Command, _ []string) error {
 			cmd.Println("Working...")
 			select {
