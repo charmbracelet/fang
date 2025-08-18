@@ -305,7 +305,7 @@ func styleExample(c *cobra.Command, line string, indent bool, styles Codeblock) 
 				continue
 			}
 
-			if arg == programName {
+			if arg == programName || slices.Contains(c.Root().Aliases, arg) {
 				args[i] += styles.Program.Name.Render(arg)
 				foundProgramName = true
 				continue
