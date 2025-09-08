@@ -375,12 +375,12 @@ func evalFlags(c *cobra.Command, styles Styles) (map[string]string, []string) {
 			)
 		}
 		key := lipgloss.JoinHorizontal(lipgloss.Left, parts...)
-		
+
 		// Handle multiline flag descriptions by processing each line separately
 		// to preserve the transform while maintaining line breaks
 		usage := f.Usage
 		var helpLines []string
-		for _, line := range strings.Split(usage, "\n") {
+		for line := range strings.SplitSeq(usage, "\n") {
 			if line != "" {
 				helpLines = append(helpLines, styles.FlagDescription.Render(line))
 			} else {
@@ -388,7 +388,7 @@ func evalFlags(c *cobra.Command, styles Styles) (map[string]string, []string) {
 			}
 		}
 		help := strings.Join(helpLines, "\n")
-		
+
 		if f.DefValue != "" && f.DefValue != "false" && f.DefValue != "0" && f.DefValue != "[]" {
 			// Add the default value to the last non-empty line
 			if len(helpLines) > 0 {
@@ -449,7 +449,7 @@ func renderGroup(w io.Writer, styles Styles, space int, name string, items iter.
 	for key, help := range items {
 		keyPadded := lipgloss.NewStyle().PaddingLeft(longPad).Render(key)
 		spacing := strings.Repeat(" ", space-lipgloss.Width(key))
-		
+
 		// Handle multiline help text by indenting continuation lines
 		helpLines := strings.Split(help, "\n")
 		if len(helpLines) == 1 {
@@ -468,7 +468,7 @@ func renderGroup(w io.Writer, styles Styles, space int, name string, items iter.
 				spacing,
 				helpLines[0],
 			))
-			
+
 			// Render subsequent lines with proper indentation
 			indent := strings.Repeat(" ", longPad+space)
 			for _, line := range helpLines[1:] {
