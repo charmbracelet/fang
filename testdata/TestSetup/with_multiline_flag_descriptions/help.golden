@@ -12,12 +12,12 @@
          
   FLAGS  
          
-    --format              Pretty-Print the output using a Go template or one of the following special values
-                          'Table': Print output in table format with column headers (default)
-                          'Table TEMPLATE': Print output in table format using the given Go template
-                          'Json': Print in JSON format
-                          'Template': Print output using the given Go template.
-                          Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates (f)
+    --format              Pretty-Print the output using a Go template or one of the following special values                                 
+                          'Table': Print output in table format with column headers (default)                                                
+                          'Table TEMPLATE': Print output in table format using the given Go template                                         
+                          'Json': Print in JSON format                                                                                       
+                          'Template': Print output using the given Go template.                                                              
+                          Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates (table)
     -h --help             Help for multiline
     --simple              A simple single-line flag
     -v --version          Version for multiline

@@ -85,7 +85,7 @@ echo 'foo' |
 	cmd.Flags().Float64Var(&baz, "idk", 0.0, "I don't know")
 	cmd.Flags().BoolP("async", "a", false, "Run async")
 	cmd.Flags().BoolVarP(&eerr, "error", "e", false, "Makes the program exit with error")
-	cmd.Flags().String("format", "f", `Pretty-print the output using a Go template or one of the following special values
+	cmd.Flags().String("format", "table", `Pretty-print the output using a Go template or one of the following special values
 'table':            Print output in table format with column headers (default)
 'table TEMPLATE':   Print output in table format using the given Go template
 'json':             Print in JSON format
