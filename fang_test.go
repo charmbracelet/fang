@@ -279,6 +279,24 @@ echo 'foo' |
 		}
 		exercise(t, mkroot)
 	})
+
+	t.Run("with multiline flag descriptions", func(t *testing.T) {
+		mkroot := func() *cobra.Command {
+			cmd := &cobra.Command{
+				Use:   "multiline",
+				Short: "Test multiline flag descriptions",
+			}
+			cmd.Flags().String("format", "f", `Pretty-print the output using a Go template or one of the following special values
+'table':            Print output in table format with column headers (default)
+'table TEMPLATE':   Print output in table format using the given Go template
+'json':             Print in JSON format
+'TEMPLATE':         Print output using the given Go template.
+Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates`)
+			cmd.Flags().String("simple", "", "A simple single-line flag")
+			return cmd
+		}
+		exercise(t, mkroot)
+	})
 }
 
 func exercise(t *testing.T, mkroot func() *cobra.Command, options ...fang.Option) {

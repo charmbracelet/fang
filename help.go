@@ -375,13 +375,36 @@ func evalFlags(c *cobra.Command, styles Styles) (map[string]string, []string) {
 			)
 		}
 		key := lipgloss.JoinHorizontal(lipgloss.Left, parts...)
-		help := styles.FlagDescription.Render(f.Usage)
+		
+		// Handle multiline flag descriptions by processing each line separately
+		// to preserve the transform while maintaining line breaks
+		usage := f.Usage
+		var helpLines []string
+		for _, line := range strings.Split(usage, "\n") {
+			if line != "" {
+				helpLines = append(helpLines, styles.FlagDescription.Render(line))
+			} else {
+				helpLines = append(helpLines, "")
+			}
+		}
+		help := strings.Join(helpLines, "\n")
+		
 		if f.DefValue != "" && f.DefValue != "false" && f.DefValue != "0" && f.DefValue != "[]" {
-			help = lipgloss.JoinHorizontal(
-				lipgloss.Left,
-				help,
-				styles.FlagDefault.Render(" ("+f.DefValue+")"),
-			)
+			// Add the default value to the last non-empty line
+			if len(helpLines) > 0 {
+				lastLineIdx := len(helpLines) - 1
+				for lastLineIdx >= 0 && helpLines[lastLineIdx] == "" {
+					lastLineIdx--
+				}
+				if lastLineIdx >= 0 {
+					helpLines[lastLineIdx] = lipgloss.JoinHorizontal(
+						lipgloss.Left,
+						helpLines[lastLineIdx],
+						styles.FlagDefault.Render(" ("+f.DefValue+")"),
+					)
+					help = strings.Join(helpLines, "\n")
+				}
+			}
 		}
 		flags[key] = help
 		keys = append(keys, key)
@@ -424,12 +447,34 @@ func evalGroups(c *cobra.Command) (map[string]string, []string) {
 func renderGroup(w io.Writer, styles Styles, space int, name string, items iter.Seq2[string, string]) {
 	_, _ = fmt.Fprintln(w, styles.Title.Render(name))
 	for key, help := range items {
-		_, _ = fmt.Fprintln(w, lipgloss.JoinHorizontal(
-			lipgloss.Left,
-			lipgloss.NewStyle().PaddingLeft(longPad).Render(key),
-			strings.Repeat(" ", space-lipgloss.Width(key)),
-			help,
-		))
+		keyPadded := lipgloss.NewStyle().PaddingLeft(longPad).Render(key)
+		spacing := strings.Repeat(" ", space-lipgloss.Width(key))
+		
+		// Handle multiline help text by indenting continuation lines
+		helpLines := strings.Split(help, "\n")
+		if len(helpLines) == 1 {
+			// Single line - use the original logic
+			_, _ = fmt.Fprintln(w, lipgloss.JoinHorizontal(
+				lipgloss.Left,
+				keyPadded,
+				spacing,
+				help,
+			))
+		} else {
+			// Multiline - render first line normally, then indent subsequent lines
+			_, _ = fmt.Fprintln(w, lipgloss.JoinHorizontal(
+				lipgloss.Left,
+				keyPadded,
+				spacing,
+				helpLines[0],
+			))
+			
+			// Render subsequent lines with proper indentation
+			indent := strings.Repeat(" ", longPad+space)
+			for _, line := range helpLines[1:] {
+				_, _ = fmt.Fprintln(w, indent+line)
+			}
+		}
 	}
 }
 
