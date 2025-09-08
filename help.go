@@ -380,12 +380,16 @@ func evalFlags(c *cobra.Command, styles Styles) (map[string]string, []string) {
 		// to preserve the transform while maintaining line breaks
 		usage := f.Usage
 		var helpLines []string
-		for line := range strings.SplitSeq(usage, "\n") {
-			if line != "" {
-				helpLines = append(helpLines, styles.FlagDescription.Render(line))
-			} else {
+		for i, line := range strings.Split(usage, "\n") {
+			if line == "" {
 				helpLines = append(helpLines, "")
+				continue
 			}
+			if i > 0 {
+				helpLines = append(helpLines, styles.FlagDescription.UnsetTransform().Render(line))
+				continue
+			}
+			helpLines = append(helpLines, styles.FlagDescription.Render(line))
 		}
 		help := strings.Join(helpLines, "\n")
 
