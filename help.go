@@ -390,7 +390,11 @@ func evalFlags(c *cobra.Command, styles Styles) (map[string]string, []string) {
 		help := strings.Join(helpLines, "\n")
 
 		if f.DefValue != "" && f.DefValue != "false" && f.DefValue != "0" && f.DefValue != "[]" {
-			help = help + styles.FlagDefault.Render(" ("+f.DefValue+")")
+			help = lipgloss.JoinHorizontal(
+				lipgloss.Left,
+				help,
+				styles.FlagDefault.Render(" ("+f.DefValue+")"),
+			)
 		}
 		flags[key] = help
 		keys = append(keys, key)
