@@ -123,6 +123,14 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 		option(&opts)
 	}
 
+	// Enable VT processing on Windows, otherwise, ANSI escape sequences might not work on older
+	// Windows versions. This is a no-op on other platforms.
+	for _, w := range []io.Writer{root.OutOrStdout(), root.ErrOrStderr()} {
+		// if we can't enable VT processing, just ignore it and continue
+		// without it.
+		_ = enableVirtualTerminalProcessing(w)
+	}
+
 	helpFunc := func(c *cobra.Command, _ []string) {
 		w := colorprofile.NewWriter(c.OutOrStdout(), os.Environ())
 		helpFn(c, w, makeStyles(mustColorscheme(opts.colorscheme)))
