@@ -375,13 +375,27 @@ func evalFlags(c *cobra.Command, styles Styles) (map[string]string, []string) {
 			)
 		}
 		key := lipgloss.JoinHorizontal(lipgloss.Left, parts...)
-		help := styles.FlagDescription.Render(f.Usage)
+
+		// Handle multiline flag descriptions by processing each line separately
+		// to preserve the transform while maintaining line breaks
+		usage := f.Usage
+		noTransform := styles.FlagDescription.UnsetTransform()
+		var helpLines []string
+		for i, line := range strings.Split(usage, "\n") {
+			if line == "" {
+				helpLines = append(helpLines, "")
+				continue
+			}
+			if i > 0 {
+				helpLines = append(helpLines, noTransform.Render(line))
+				continue
+			}
+			helpLines = append(helpLines, styles.FlagDescription.Render(line))
+		}
+		help := strings.Join(helpLines, "\n")
+
 		if f.DefValue != "" && f.DefValue != "false" && f.DefValue != "0" && f.DefValue != "[]" {
-			help = lipgloss.JoinHorizontal(
-				lipgloss.Left,
-				help,
-				styles.FlagDefault.Render(" ("+f.DefValue+")"),
-			)
+			help += styles.FlagDefault.Render(" (" + f.DefValue + ")")
 		}
 		flags[key] = help
 		keys = append(keys, key)

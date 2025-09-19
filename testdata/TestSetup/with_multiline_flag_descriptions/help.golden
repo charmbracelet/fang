@@ -1,0 +1,24 @@
+
+  Test multiline flag descriptions           
+         
+  USAGE  
+         
+    multiline [command] [--flags]  
+            
+  COMMANDS  
+            
+    completion [command]  Generate the autocompletion script for the specified shell
+    help [command]        Help about any command
+         
+  FLAGS  
+         
+    --format              Pretty-Print the output using a Go template or one of the following special values                                 
+                          'table':            Print output in table format with column headers (default)                                     
+                          'table TEMPLATE':   Print output in table format using the given Go template                                       
+                          'json':             Print in JSON format                                                                           
+                          'TEMPLATE':         Print output using the given Go template.                                                      
+                          Refer to https://docs.docker.com/go/formatting/ for more information about formatting output with templates (table)
+    -h --help             Help for multiline
+    --simple              A simple single-line flag
+    -v --version          Version for multiline
+
