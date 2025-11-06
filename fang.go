@@ -9,8 +9,8 @@ import (
 	"os/signal"
 	"runtime/debug"
 
+	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/colorprofile"
-	"github.com/charmbracelet/lipgloss/v2"
 	mango "github.com/muesli/mango-cobra"
 	"github.com/muesli/roff"
 	"github.com/spf13/cobra"

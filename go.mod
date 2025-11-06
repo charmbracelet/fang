@@ -3,31 +3,33 @@ module github.com/charmbracelet/fang
 go 1.24.2
 
 require (
-	github.com/charmbracelet/colorprofile v0.3.2
-	github.com/charmbracelet/lipgloss/v2 v2.0.0-beta.3.0.20250917201909-41ff0bf215ea
-	github.com/charmbracelet/x/ansi v0.10.1
+	charm.land/lipgloss/v2 v2.0.0-beta.3.0.20251106193318-19329a3e8410
+	github.com/charmbracelet/colorprofile v0.3.3
+	github.com/charmbracelet/x/ansi v0.11.0
 	github.com/charmbracelet/x/exp/charmtone v0.0.0-20250603201427-c31516f43444
-	github.com/charmbracelet/x/exp/golden v0.0.0-20240806155701-69247e0abc2a
-	github.com/charmbracelet/x/term v0.2.1
+	github.com/charmbracelet/x/exp/golden v0.0.0-20250806222409-83e3a29d542f
+	github.com/charmbracelet/x/term v0.2.2
 	github.com/muesli/mango-cobra v1.2.0
 	github.com/muesli/roff v0.1.0
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/pflag v1.0.6
 	github.com/stretchr/testify v1.10.0
-	golang.org/x/sys v0.36.0
+	golang.org/x/sys v0.37.0
 	golang.org/x/text v0.24.0
 )
 
 require (
-	github.com/aymanbagabas/go-udiff v0.2.0 // indirect
-	github.com/charmbracelet/ultraviolet v0.0.0-20250915111650-81d4262876ef // indirect
-	github.com/charmbracelet/x/cellbuf v0.0.13 // indirect
+	github.com/aymanbagabas/go-udiff v0.3.1 // indirect
+	github.com/charmbracelet/ultraviolet v0.0.0-20251106190538-99ea45596692 // indirect
 	github.com/charmbracelet/x/termios v0.1.1 // indirect
 	github.com/charmbracelet/x/windows v0.2.2 // indirect
+	github.com/clipperhouse/displaywidth v0.4.1 // indirect
+	github.com/clipperhouse/stringish v0.1.1 // indirect
+	github.com/clipperhouse/uax29/v2 v2.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.3.0 // indirect
-	github.com/mattn/go-runewidth v0.0.16 // indirect
+	github.com/mattn/go-runewidth v0.0.19 // indirect
 	github.com/muesli/cancelreader v0.2.2 // indirect
 	github.com/muesli/mango v0.1.0 // indirect
 	github.com/muesli/mango-pflag v0.1.0 // indirect
