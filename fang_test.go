@@ -6,7 +6,7 @@ import (
 	"io"
 	"testing"
 
-	"github.com/charmbracelet/fang"
+	"charm.land/fang/v2"
 	"github.com/charmbracelet/x/exp/golden"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/require"

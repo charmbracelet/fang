@@ -5,7 +5,6 @@ go 1.24.2
 require (
 	charm.land/lipgloss/v2 v2.0.0-beta.3.0.20251106193318-19329a3e8410
 	github.com/charmbracelet/colorprofile v0.3.3
-	github.com/charmbracelet/fang v0.4.4
 	github.com/charmbracelet/x/ansi v0.11.0
 	github.com/charmbracelet/x/exp/charmtone v0.0.0-20250603201427-c31516f43444
 	github.com/charmbracelet/x/exp/golden v0.0.0-20250806222409-83e3a29d542f
