@@ -1,4 +1,4 @@
-module github.com/charmbracelet/fang
+module charm.land/fang/v2
 
 go 1.24.2
 
@@ -20,7 +20,7 @@ require (
 
 require (
 	github.com/aymanbagabas/go-udiff v0.3.1 // indirect
-	github.com/charmbracelet/ultraviolet v0.0.0-20251106190538-99ea45596692 // indirect
+	github.com/charmbracelet/ultraviolet v0.0.0-20251106193841-7889546fc720 // indirect
 	github.com/charmbracelet/x/termios v0.1.1 // indirect
 	github.com/charmbracelet/x/windows v0.2.2 // indirect
 	github.com/clipperhouse/displaywidth v0.4.1 // indirect
