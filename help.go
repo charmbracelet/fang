@@ -434,7 +434,8 @@ func evalCmds(c *cobra.Command, styles Styles) (map[string](map[string]string), 
 
 func evalGroups(c *cobra.Command) (map[string]string, []string) {
 	// make sure the default group is the first
-	ids := make([]string, len(c.Groups())+1)
+	ids := make([]string, 1, 1+len(c.Groups()))
+	ids[0] = ""
 	groups := map[string]string{"": "commands"}
 	for _, g := range c.Groups() {
 		groups[g.ID] = g.Title

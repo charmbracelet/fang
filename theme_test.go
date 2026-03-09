@@ -80,6 +80,41 @@ func TestTitleFirstWord(t *testing.T) {
 			input:    "\t\n  hello\tworld",
 			expected: "\t\n  Hello\tworld",
 		},
+		{
+			name:     "number first word",
+			input:    "1234 world",
+			expected: "1234 world",
+		},
+		{
+			name:     "single letter",
+			input:    "a cat",
+			expected: "A cat",
+		},
+		{
+			name:     "accented character",
+			input:    "été chaud",
+			expected: "Été chaud",
+		},
+		{
+			name:     "punctuation first word",
+			input:    "- item",
+			expected: "- item",
+		},
+		{
+			name:     "all caps",
+			input:    "ABC",
+			expected: "Abc",
+		},
+		{
+			name:     "all caps with second word",
+			input:    "ABC def",
+			expected: "Abc def",
+		},
+		{
+			name:     "CJK characters",
+			input:    "你好 世界",
+			expected: "你好 世界",
+		},
 	}
 
 	for _, tt := range tests {
