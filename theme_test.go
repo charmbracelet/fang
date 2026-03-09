@@ -115,6 +115,11 @@ func TestTitleFirstWord(t *testing.T) {
 			input:    "你好 世界",
 			expected: "你好 世界",
 		},
+		{
+			name:     "CJK characters with newline",
+			input:    "你好\n世界",
+			expected: "你好\n世界",
+		},
 	}
 
 	for _, tt := range tests {
