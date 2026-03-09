@@ -46,12 +46,6 @@
     echo 'foo' |                           
       example sub |                        
       cat -                                
-            
-  COMMANDS  
-            
-    completion [command]  Generate the autocompletion script for the specified shell
-    help [command]        Help about any command
-    sub                   A sub command
          
   FLAGS  
          

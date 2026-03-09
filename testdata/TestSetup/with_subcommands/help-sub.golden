@@ -8,10 +8,6 @@
   EXAMPLES  
             
     simple sub1 some args  
-            
-  COMMANDS  
-            
-    sub2 [args]  Yet another sub command
          
   FLAGS  
          
