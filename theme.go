@@ -201,6 +201,12 @@ func makeStyles(cs ColorScheme) Styles {
 
 func titleFirstWord(s string) string {
 	// Find the first word, skipping any leading whitespace.
+	words := strings.Fields(strings.TrimSpace(s))
+	if len(words) == 0 {
+		return s
+	}
+	words[0] = cases.Title(language.AmericanEnglish).String(words[0])
+	return strings.Join(words, " ")
 	start := 0
 	for start < len(s) && unicode.IsSpace(rune(s[start])) {
 		start++
