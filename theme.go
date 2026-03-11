@@ -4,6 +4,7 @@ import (
 	"image/color"
 	"os"
 	"strings"
+	"unicode"
 
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/x/exp/charmtone"
@@ -199,10 +200,23 @@ func makeStyles(cs ColorScheme) Styles {
 }
 
 func titleFirstWord(s string) string {
-	words := strings.Fields(s)
-	if len(words) == 0 {
+	// Find the first word, skipping any leading whitespace.
+	runes := []rune(s)
+	start := 0
+	for start < len(runes) && unicode.IsSpace(runes[start]) {
+		start++
+	}
+	if start >= len(runes) {
 		return s
 	}
-	words[0] = cases.Title(language.AmericanEnglish).String(words[0])
-	return strings.Join(words, " ")
+
+	// Find the end of the first word.
+	end := start
+	for end < len(runes) && !unicode.IsSpace(runes[end]) {
+		end++
+	}
+
+	// Capitalize the first word and reconstruct the string.
+	firstWord := cases.Title(language.AmericanEnglish).String(string(runes[start:end]))
+	return string(runes[:start]) + firstWord + string(runes[end:])
 }
