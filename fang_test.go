@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"charm.land/fang/v2"
+	"github.com/charmbracelet/colorprofile"
 	"github.com/charmbracelet/x/exp/golden"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/require"
@@ -214,6 +215,23 @@ func TestSetup(t *testing.T) {
 			return cmd
 		}
 		exercise(t, mkroot)
+	})
+
+	t.Run("with help appender", func(t *testing.T) {
+		mkroot := func() *cobra.Command {
+			return &cobra.Command{
+				Use:   "simple",
+				Short: "Short help",
+			}
+		}
+		customAppender := func(w *colorprofile.Writer, c *cobra.Command, styles fang.Styles) {
+			_, _ = fmt.Fprintln(w, styles.Title.Render("environment"))
+			_, _ = fmt.Fprintf(w, "  %s  %s\n",
+				styles.Program.Flag.Render("APP_DEBUG"),
+				styles.FlagDescription.Render("Enable debug mode"),
+			)
+		}
+		doExercise(t, mkroot, []string{"--help"}, assertNoError, fang.WithHelpAppender(customAppender))
 	})
 
 	t.Run("with examples", func(t *testing.T) {
