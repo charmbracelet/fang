@@ -39,7 +39,7 @@ var width = sync.OnceValue(func() int {
 	return min(w, 120)
 })
 
-func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
+func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles, appender HelpAppender) {
 	writeLongShort(w, styles, cmp.Or(c.Long, c.Short))
 	usage := styleUsage(c, styles.Codeblock.Program, true)
 	examples := styleExamples(c, styles)
@@ -102,6 +102,11 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
 				}
 			}
 		})
+	}
+
+	// Call the custom help appender if provided
+	if appender != nil {
+		appender(w, c, styles)
 	}
 
 	_, _ = fmt.Fprintln(w)

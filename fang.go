@@ -21,18 +21,23 @@ const shaLen = 7
 // ErrorHandler handles an error, printing them to the given [io.Writer].
 type ErrorHandler = func(w io.Writer, styles Styles, err error)
 
+// HelpAppender is a callback that can append custom content to the help output.
+// It receives the writer, command, and styles to maintain consistent formatting.
+type HelpAppender = func(w *colorprofile.Writer, c *cobra.Command, styles Styles)
+
 // ColorSchemeFunc gets a [lipgloss.LightDarkFunc] and returns a [ColorScheme].
 type ColorSchemeFunc = func(lipgloss.LightDarkFunc) ColorScheme
 
 type settings struct {
-	completions bool
-	manpages    bool
-	skipVersion bool
-	version     string
-	commit      string
-	colorscheme ColorSchemeFunc
-	errHandler  ErrorHandler
-	signals     []os.Signal
+	completions  bool
+	manpages     bool
+	skipVersion  bool
+	version      string
+	commit       string
+	colorscheme  ColorSchemeFunc
+	errHandler   ErrorHandler
+	helpAppender HelpAppender
+	signals      []os.Signal
 }
 
 // Option changes fang settings.
@@ -98,6 +103,16 @@ func WithErrorHandler(handler ErrorHandler) Option {
 	}
 }
 
+// WithHelpAppender sets a callback that appends custom content to the help output.
+// The callback is invoked after fang renders the standard help content, allowing
+// users to add custom sections (e.g., environment variables, feedback instructions)
+// while maintaining fang's styling consistency.
+func WithHelpAppender(appender HelpAppender) Option {
+	return func(s *settings) {
+		s.helpAppender = appender
+	}
+}
+
 // WithNotifySignal sets the signals that should interrupt the execution of the
 // program.
 func WithNotifySignal(signals ...os.Signal) Option {
@@ -129,7 +144,7 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 
 	helpFunc := func(c *cobra.Command, _ []string) {
 		w := colorprofile.NewWriter(c.OutOrStdout(), os.Environ())
-		helpFn(c, w, makeStyles(mustColorscheme(opts.colorscheme)))
+		helpFn(c, w, makeStyles(mustColorscheme(opts.colorscheme)), opts.helpAppender)
 	}
 
 	root.SilenceUsage = true
