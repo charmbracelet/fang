@@ -71,8 +71,8 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
 		_, _ = fmt.Fprintln(w, blockStyle.Render(strings.Join(examples, "\n")))
 	}
 
-	groups, groupKeys := evalGroups(c)
 	cmds, cmdKeys := evalCmds(c, styles)
+	groups, groupKeys := evalGroups(c, cmds)
 	flags, flagKeys := evalFlags(c, styles)
 	space := calculateSpace(cmdKeys, flagKeys)
 
@@ -432,7 +432,7 @@ func evalCmds(c *cobra.Command, styles Styles) (map[string](map[string]string), 
 	return cmds, keys
 }
 
-func evalGroups(c *cobra.Command) (map[string]string, []string) {
+func evalGroups(c *cobra.Command, cmds map[string]map[string]string) (map[string]string, []string) {
 	// make sure the default group is the first
 	ids := make([]string, 1, 1+len(c.Groups()))
 	ids[0] = ""
@@ -440,6 +440,13 @@ func evalGroups(c *cobra.Command) (map[string]string, []string) {
 	for _, g := range c.Groups() {
 		groups[g.ID] = g.Title
 		ids = append(ids, g.ID)
+	}
+	// add any group that is not in the groups map
+	for id := range cmds {
+		if _, ok := groups[id]; !ok {
+			groups[id] = id
+			ids = append(ids, id)
+		}
 	}
 	return groups, ids
 }

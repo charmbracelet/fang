@@ -280,6 +280,26 @@ echo 'foo' |
 		exercise(t, mkroot)
 	})
 
+	t.Run("with unregistered command groups", func(t *testing.T) {
+		mkroot := func() *cobra.Command {
+			cmd := &cobra.Command{
+				Use:   "unregistered",
+				Short: "Short help",
+			}
+			cmd.AddGroup(&cobra.Group{
+				ID:    "unregistered-id",
+				Title: "Unregistered Group",
+			})
+			cmd.AddCommand(&cobra.Command{
+				Use:     "sub-cmd",
+				Short:   "a sub command",
+				GroupID: "unregistered-id",
+			})
+			return cmd
+		}
+		exercise(t, mkroot)
+	})
+
 	t.Run("with multiline flag descriptions", func(t *testing.T) {
 		mkroot := func() *cobra.Command {
 			cmd := &cobra.Command{

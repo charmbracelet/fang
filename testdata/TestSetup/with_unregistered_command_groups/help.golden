@@ -3,24 +3,19 @@
          
   USAGE  
          
-    simple [command] [--flags]  
+    unregistered [command] [--flags]  
             
   COMMANDS  
             
     completion [command]  Generate the autocompletion script for the specified shell
     help [command]        Help about any command
+                      
+  UNREGISTERED GROUP  
+                      
     sub-cmd               A sub command
-               
-  FIRST GROUP  
-               
-    sub-cmd-2             A sub command
-                
-  SECOND GROUP  
-                
-    sub-cmd-3             A sub command
          
   FLAGS  
          
-    -h --help             Help for simple
-    -v --version          Version for simple
+    -h --help             Help for unregistered
+    -v --version          Version for unregistered
 
