@@ -140,6 +140,7 @@ func isUsageError(err error) bool {
 		"unknown flag:",
 		"unknown shorthand flag:",
 		"unknown command",
+		"unknown help topic",
 		"invalid argument",
 	} {
 		if strings.HasPrefix(s, prefix) {

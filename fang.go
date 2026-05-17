@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/signal"
 	"runtime/debug"
+	"strings"
 
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/colorprofile"
@@ -139,6 +140,15 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 	}
 	root.SetHelpFunc(helpFunc)
 
+	// Cobra's default help command prints "Unknown help topic" to stdout
+	// and returns nil, so the ErrorHandler never sees the error and the
+	// message lands unstyled. Swap in one that returns an error instead.
+	// The has-check makes this safe when Execute is called more than once
+	// on the same root (e.g. in tests).
+	if !hasFangHelpCommand(root) {
+		root.SetHelpCommand(newFangHelpCommand(root))
+	}
+
 	if opts.manpages {
 		root.AddCommand(&cobra.Command{
 			Use:                   "man",
@@ -176,6 +186,39 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 		return err //nolint:wrapcheck
 	}
 	return nil
+}
+
+const fangHelpAnnotation = "fang.helpCommand"
+
+func newFangHelpCommand(root *cobra.Command) *cobra.Command {
+	return &cobra.Command{
+		Use:   "help [command]",
+		Short: "Help about any command",
+		Long: "Help provides help for any command in the application.\n" +
+			"Simply type " + root.Name() + " help [path to command] for full details.",
+		Annotations: map[string]string{fangHelpAnnotation: "1"},
+		ValidArgsFunction: func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
+			return nil, cobra.ShellCompDirectiveNoFileComp
+		},
+		RunE: func(c *cobra.Command, args []string) error {
+			cmd, _, e := c.Root().Find(args)
+			if cmd == nil || e != nil {
+				return fmt.Errorf("unknown help topic %q", strings.Join(args, " "))
+			}
+			cmd.InitDefaultHelpFlag()
+			cmd.InitDefaultVersionFlag()
+			return cmd.Help() //nolint:wrapcheck
+		},
+	}
+}
+
+func hasFangHelpCommand(root *cobra.Command) bool {
+	for _, sub := range root.Commands() {
+		if sub.Annotations[fangHelpAnnotation] == "1" {
+			return true
+		}
+	}
+	return false
 }
 
 func buildVersion(opts settings) string {

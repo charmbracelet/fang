@@ -181,6 +181,15 @@ func TestSetup(t *testing.T) {
 				assertNoError,
 			)
 		})
+
+		t.Run("help-unknown", func(t *testing.T) {
+			doExercise(
+				t,
+				mkroot,
+				[]string{"help", "nope"},
+				assertError,
+			)
+		})
 	})
 
 	t.Run("with command groups", func(t *testing.T) {
