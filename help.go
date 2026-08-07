@@ -39,7 +39,7 @@ var width = sync.OnceValue(func() int {
 	return min(w, 120)
 })
 
-func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
+func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles, flagTypes bool) {
 	writeLongShort(w, styles, cmp.Or(c.Long, c.Short))
 	usage := styleUsage(c, styles.Codeblock.Program, true)
 	examples := styleExamples(c, styles)
@@ -73,7 +73,7 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
 
 	groups, groupKeys := evalGroups(c)
 	cmds, cmdKeys := evalCmds(c, styles)
-	flags, flagKeys := evalFlags(c, styles)
+	flags, flagKeys := evalFlags(c, styles, flagTypes)
 	space := calculateSpace(cmdKeys, flagKeys)
 
 	for _, groupID := range groupKeys {
@@ -363,23 +363,38 @@ func styleExample(c *cobra.Command, line string, indent bool, styles Codeblock) 
 	)
 }
 
-func evalFlags(c *cobra.Command, styles Styles) (map[string]string, []string) {
+func evalFlags(c *cobra.Command, styles Styles, flagTypes bool) (map[string]string, []string) {
 	flags := map[string]string{}
 	keys := []string{}
 	c.Flags().VisitAll(func(f *pflag.Flag) {
 		if f.Hidden {
 			return
 		}
+
+		var typeStr string
+		if flagTypes && f.Value.Type() != "bool" {
+			typeStr = f.Value.Type()
+
+			removeBitSizeRe := regexp.MustCompile(`(u?int|float)(8|16|32|64)`)
+			typeStr = removeBitSizeRe.ReplaceAllString(typeStr, "$1")
+
+			fixSliceNameRe := regexp.MustCompile(`(.+)(Slice|Array)`)
+			typeStr = fixSliceNameRe.ReplaceAllString(typeStr, "[]$1")
+			if typeStr != "" {
+				typeStr = " " + styles.Program.DimmedArgument.Render(typeStr)
+			}
+		}
+
 		var parts []string
 		if f.Shorthand == "" {
 			parts = append(
 				parts,
-				styles.Program.Flag.Render("--"+f.Name),
+				styles.Program.Flag.Render("--"+f.Name)+typeStr,
 			)
 		} else {
 			parts = append(
 				parts,
-				styles.Program.Flag.Render("-"+f.Shorthand+" --"+f.Name),
+				styles.Program.Flag.Render("-"+f.Shorthand+" --"+f.Name)+typeStr,
 			)
 		}
 		key := lipgloss.JoinHorizontal(lipgloss.Left, parts...)

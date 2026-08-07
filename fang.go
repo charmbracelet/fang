@@ -28,6 +28,7 @@ type settings struct {
 	completions bool
 	manpages    bool
 	skipVersion bool
+	flagTypes   bool
 	version     string
 	commit      string
 	colorscheme ColorSchemeFunc
@@ -106,6 +107,13 @@ func WithNotifySignal(signals ...os.Signal) Option {
 	}
 }
 
+// WithFlagTypes enables flags value types for help commands
+func WithFlagTypes() Option {
+	return func(s *settings) {
+		s.flagTypes = true
+	}
+}
+
 // Execute applies fang to the command and executes it.
 func Execute(ctx context.Context, root *cobra.Command, options ...Option) error {
 	opts := settings{
@@ -129,7 +137,7 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 
 	helpFunc := func(c *cobra.Command, _ []string) {
 		w := colorprofile.NewWriter(c.OutOrStdout(), os.Environ())
-		helpFn(c, w, makeStyles(mustColorscheme(opts.colorscheme)))
+		helpFn(c, w, makeStyles(mustColorscheme(opts.colorscheme)), opts.flagTypes)
 	}
 
 	root.SilenceUsage = true
