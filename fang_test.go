@@ -57,6 +57,31 @@ func TestSetup(t *testing.T) {
 		}))
 	})
 
+	t.Run("use with optional arg before required", func(t *testing.T) {
+		mkroot := func() *cobra.Command {
+			cmd := &cobra.Command{
+				Use:   "simple",
+				Short: "Short help",
+			}
+			cmd.AddCommand(&cobra.Command{
+				Use:   "update [<id> | <branch>] <note-id>",
+				Short: "a sub command",
+			})
+			return cmd
+		}
+
+		exercise(t, mkroot)
+
+		t.Run("help-sub", func(t *testing.T) {
+			doExercise(
+				t,
+				mkroot,
+				[]string{"update", "--help"},
+				assertNoError,
+			)
+		})
+	})
+
 	t.Run("without completions", func(t *testing.T) {
 		cmd := toMkroot(&cobra.Command{
 			Use:   "simple",
