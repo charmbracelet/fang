@@ -39,7 +39,7 @@ var width = sync.OnceValue(func() int {
 	return min(w, 120)
 })
 
-func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles, appender HelpAppender) {
+func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles, sectionsFn HelpSectionsFunc) {
 	writeLongShort(w, styles, cmp.Or(c.Long, c.Short))
 	usage := styleUsage(c, styles.Codeblock.Program, true)
 	examples := styleExamples(c, styles)
@@ -74,7 +74,18 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles, appender He
 	groups, groupKeys := evalGroups(c)
 	cmds, cmdKeys := evalCmds(c, styles)
 	flags, flagKeys := evalFlags(c, styles)
-	space := calculateSpace(cmdKeys, flagKeys)
+
+	var sections []HelpSection
+	if sectionsFn != nil {
+		sections = sectionsFn(c)
+	}
+	sectionKeys := make([][]string, len(sections))
+	for i, section := range sections {
+		for _, item := range section.Items {
+			sectionKeys[i] = append(sectionKeys[i], styles.Program.Flag.Render(item.Name))
+		}
+	}
+	space := calculateSpace(append([][]string{cmdKeys, flagKeys}, sectionKeys...)...)
 
 	for _, groupID := range groupKeys {
 		group := cmds[groupID]
@@ -104,9 +115,24 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles, appender He
 		})
 	}
 
-	// Call the custom help appender if provided
-	if appender != nil {
-		appender(w, c, styles)
+	for i, section := range sections {
+		if len(section.Items) == 0 && section.Text == "" {
+			continue
+		}
+		if len(section.Items) > 0 {
+			renderGroup(w, styles, space, section.Title, func(yield func(string, string) bool) {
+				for j, item := range section.Items {
+					if !yield(sectionKeys[i][j], styles.FlagDescription.Render(item.Description)) {
+						return
+					}
+				}
+			})
+		} else {
+			_, _ = fmt.Fprintln(w, styles.Title.Render(section.Title))
+		}
+		if section.Text != "" {
+			_, _ = fmt.Fprintln(w, styles.Text.Width(width()).PaddingLeft(longPad).Render(section.Text))
+		}
 	}
 
 	_, _ = fmt.Fprintln(w)
@@ -461,11 +487,13 @@ func renderGroup(w io.Writer, styles Styles, space int, name string, items iter.
 	}
 }
 
-func calculateSpace(k1, k2 []string) int {
+func calculateSpace(keys ...[]string) int {
 	const spaceBetween = 2
 	space := minSpace
-	for _, k := range append(k1, k2...) {
-		space = max(space, lipgloss.Width(k)+spaceBetween)
+	for _, ks := range keys {
+		for _, k := range ks {
+			space = max(space, lipgloss.Width(k)+spaceBetween)
+		}
 	}
 	return space
 }

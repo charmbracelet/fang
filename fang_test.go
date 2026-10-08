@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"charm.land/fang/v2"
-	"github.com/charmbracelet/colorprofile"
 	"github.com/charmbracelet/x/exp/golden"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/require"
@@ -217,21 +216,26 @@ func TestSetup(t *testing.T) {
 		exercise(t, mkroot)
 	})
 
-	t.Run("with help appender", func(t *testing.T) {
+	t.Run("with help sections", func(t *testing.T) {
 		mkroot := func() *cobra.Command {
-			return &cobra.Command{
+			cmd := &cobra.Command{
 				Use:   "simple",
 				Short: "Short help",
 			}
+			cmd.Flags().Bool("verbose-output", false, "Print more output")
+			return cmd
 		}
-		customAppender := func(w *colorprofile.Writer, c *cobra.Command, styles fang.Styles) {
-			_, _ = fmt.Fprintln(w, styles.Title.Render("environment"))
-			_, _ = fmt.Fprintf(w, "  %s  %s\n",
-				styles.Program.Flag.Render("APP_DEBUG"),
-				styles.FlagDescription.Render("Enable debug mode"),
-			)
+		sections := func(*cobra.Command) []fang.HelpSection {
+			return []fang.HelpSection{{
+				Title: "environment",
+				Items: []fang.HelpItem{
+					{Name: "APP_DEBUG", Description: "Enable debug mode"},
+					{Name: "APP_LOG_LEVEL", Description: "Set the log level"},
+				},
+				Text: "Variables override flags.",
+			}}
 		}
-		doExercise(t, mkroot, []string{"--help"}, assertNoError, fang.WithHelpAppender(customAppender))
+		doExercise(t, mkroot, []string{"--help"}, assertNoError, fang.WithHelpSections(sections))
 	})
 
 	t.Run("with examples", func(t *testing.T) {

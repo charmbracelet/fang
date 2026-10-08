@@ -21,9 +21,23 @@ const shaLen = 7
 // ErrorHandler handles an error, printing them to the given [io.Writer].
 type ErrorHandler = func(w io.Writer, styles Styles, err error)
 
-// HelpAppender is a callback that can append custom content to the help output.
-// It receives the writer, command, and styles to maintain consistent formatting.
-type HelpAppender = func(w *colorprofile.Writer, c *cobra.Command, styles Styles)
+// HelpSection is a custom section added to the end of the help output.
+type HelpSection struct {
+	Title string
+	// Items are rendered as aligned name and description rows, like flags.
+	Items []HelpItem
+	// Text is rendered as a paragraph after the items.
+	Text string
+}
+
+// HelpItem is a single name and description row in a [HelpSection].
+type HelpItem struct {
+	Name        string
+	Description string
+}
+
+// HelpSectionsFunc returns the custom sections to add to the help output of the given command.
+type HelpSectionsFunc = func(c *cobra.Command) []HelpSection
 
 // ColorSchemeFunc gets a [lipgloss.LightDarkFunc] and returns a [ColorScheme].
 type ColorSchemeFunc = func(lipgloss.LightDarkFunc) ColorScheme
@@ -36,7 +50,7 @@ type settings struct {
 	commit       string
 	colorscheme  ColorSchemeFunc
 	errHandler   ErrorHandler
-	helpAppender HelpAppender
+	helpSections HelpSectionsFunc
 	signals      []os.Signal
 }
 
@@ -103,13 +117,10 @@ func WithErrorHandler(handler ErrorHandler) Option {
 	}
 }
 
-// WithHelpAppender sets a callback that appends custom content to the help output.
-// The callback is invoked after fang renders the standard help content, allowing
-// users to add custom sections (e.g., environment variables, feedback instructions)
-// while maintaining fang's styling consistency.
-func WithHelpAppender(appender HelpAppender) Option {
+// WithHelpSections sets a function that adds custom sections after fang's help output.
+func WithHelpSections(fn HelpSectionsFunc) Option {
 	return func(s *settings) {
-		s.helpAppender = appender
+		s.helpSections = fn
 	}
 }
 
@@ -144,7 +155,7 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 
 	helpFunc := func(c *cobra.Command, _ []string) {
 		w := colorprofile.NewWriter(c.OutOrStdout(), os.Environ())
-		helpFn(c, w, makeStyles(mustColorscheme(opts.colorscheme)), opts.helpAppender)
+		helpFn(c, w, makeStyles(mustColorscheme(opts.colorscheme)), opts.helpSections)
 	}
 
 	root.SilenceUsage = true
