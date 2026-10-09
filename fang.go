@@ -21,18 +21,37 @@ const shaLen = 7
 // ErrorHandler handles an error, printing them to the given [io.Writer].
 type ErrorHandler = func(w io.Writer, styles Styles, err error)
 
+// HelpSection is a custom section added to the end of the help output.
+type HelpSection struct {
+	Title string
+	// Items are rendered as aligned name and description rows, like flags.
+	Items []HelpItem
+	// Text is rendered as a paragraph after the items.
+	Text string
+}
+
+// HelpItem is a single name and description row in a [HelpSection].
+type HelpItem struct {
+	Name        string
+	Description string
+}
+
+// HelpSectionsFunc returns the custom sections to add to the help output of the given command.
+type HelpSectionsFunc = func(c *cobra.Command) []HelpSection
+
 // ColorSchemeFunc gets a [lipgloss.LightDarkFunc] and returns a [ColorScheme].
 type ColorSchemeFunc = func(lipgloss.LightDarkFunc) ColorScheme
 
 type settings struct {
-	completions bool
-	manpages    bool
-	skipVersion bool
-	version     string
-	commit      string
-	colorscheme ColorSchemeFunc
-	errHandler  ErrorHandler
-	signals     []os.Signal
+	completions  bool
+	manpages     bool
+	skipVersion  bool
+	version      string
+	commit       string
+	colorscheme  ColorSchemeFunc
+	errHandler   ErrorHandler
+	helpSections HelpSectionsFunc
+	signals      []os.Signal
 }
 
 // Option changes fang settings.
@@ -98,6 +117,13 @@ func WithErrorHandler(handler ErrorHandler) Option {
 	}
 }
 
+// WithHelpSections sets a function that adds custom sections after fang's help output.
+func WithHelpSections(fn HelpSectionsFunc) Option {
+	return func(s *settings) {
+		s.helpSections = fn
+	}
+}
+
 // WithNotifySignal sets the signals that should interrupt the execution of the
 // program.
 func WithNotifySignal(signals ...os.Signal) Option {
@@ -129,7 +155,7 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 
 	helpFunc := func(c *cobra.Command, _ []string) {
 		w := colorprofile.NewWriter(c.OutOrStdout(), os.Environ())
-		helpFn(c, w, makeStyles(mustColorscheme(opts.colorscheme)))
+		helpFn(c, w, makeStyles(mustColorscheme(opts.colorscheme)), opts.helpSections)
 	}
 
 	root.SilenceUsage = true

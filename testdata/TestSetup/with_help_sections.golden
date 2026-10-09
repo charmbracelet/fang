@@ -1,0 +1,24 @@
+
+  Short help                                 
+         
+  USAGE  
+         
+    simple [command] [--flags]  
+            
+  COMMANDS  
+            
+    completion [command]  Generate the autocompletion script for the specified shell
+    help [command]        Help about any command
+         
+  FLAGS  
+         
+    -h --help             Help for simple
+    --verbose-output      Print more output
+    -v --version          Version for simple
+               
+  ENVIRONMENT  
+               
+    APP_DEBUG             Enable debug mode
+    APP_LOG_LEVEL         Set the log level
+    Variables override flags.                
+
