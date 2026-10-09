@@ -161,7 +161,19 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 	root.SilenceUsage = true
 	root.SilenceErrors = true
 	if !opts.skipVersion {
+		styles := makeStyles(mustColorscheme(opts.colorscheme))
 		root.Version = buildVersion(opts)
+		// Cobra's default version template is plain text. Match the
+		// styling used elsewhere by rendering the program name with
+		// the Program.Name style and the version itself with the
+		// FlagDefault style. The trailing newline mirrors cobra's
+		// default template.
+		root.SetVersionTemplate(
+			styles.Program.Name.Render(root.Name()) +
+				" version " +
+				styles.FlagDefault.Render(root.Version) +
+				"\n",
+		)
 	}
 	root.SetHelpFunc(helpFunc)
 
