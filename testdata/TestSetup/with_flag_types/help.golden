@@ -1,0 +1,30 @@
+
+  Long help                                  
+         
+  USAGE  
+         
+    with_flag_types [command] [--flags]  
+            
+  COMMANDS  
+            
+    completion [command]    Generate the autocompletion script for the specified shell
+    help [command]          Help about any command
+         
+  FLAGS  
+         
+    --bool                  A bool flag
+    --duration duration     An a  duration flag (0s)
+    --durations []duration  An a slice of duration flag
+    --float32 float         A float32 flag
+    --float32s []float      A slice of float32 flag
+    --float64 float         A float64 flag
+    --float64s []float      A slice of float64 flag
+    -h --help               Help for with_flag_types
+    --int int               An int flag
+    --ints []int            An a slice of int flag
+    --ip ip                 An a  duration flag (0.0.0.0)
+    --ips []ip              An a slice of duration flag
+    --string string         A string flag (default-value)
+    --strings []string      A slice of string flag
+    -v --version            Version for with_flag_types
+

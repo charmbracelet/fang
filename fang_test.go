@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"net"
 	"testing"
 
 	"charm.land/fang/v2"
@@ -140,6 +141,31 @@ func TestSetup(t *testing.T) {
 			return cmd
 		}
 		exercise(t, mkroot)
+	})
+
+	t.Run("with flag types", func(t *testing.T) {
+		mkroot := func() *cobra.Command {
+			cmd := &cobra.Command{
+				Use:   "with_flag_types",
+				Short: "Short help",
+				Long:  "Long help",
+			}
+			cmd.Flags().String("string", "default-value", "a string flag")
+			cmd.Flags().StringSlice("strings", nil, "a slice of string flag")
+			cmd.Flags().Int("int", 0, "an int flag")
+			cmd.Flags().IntSlice("ints", nil, "an a slice of int flag")
+			cmd.Flags().Duration("duration", 0, "an a  duration flag")
+			cmd.Flags().DurationSlice("durations", nil, "an a slice of duration flag")
+			cmd.Flags().IP("ip", net.IPv4zero, "an a  duration flag")
+			cmd.Flags().IPSlice("ips", nil, "an a slice of duration flag")
+			cmd.Flags().Float32("float32", 0, "a float32 flag")
+			cmd.Flags().Float32Slice("float32s", nil, "a slice of float32 flag")
+			cmd.Flags().Float64("float64", 0, "a float64 flag")
+			cmd.Flags().Float64Slice("float64s", nil, "a slice of float64 flag")
+			cmd.Flags().Bool("bool", false, "a bool flag")
+			return cmd
+		}
+		exercise(t, mkroot, fang.WithFlagTypes())
 	})
 
 	t.Run("with subcommands", func(t *testing.T) {
