@@ -98,14 +98,14 @@ Refer to https://docs.docker.com/go/formatting/ for more information about forma
 	_ = cmd.Flags().MarkHidden("error")
 
 	cmd.AddGroup(&cobra.Group{
-		ID:    "group1",
+		ID:    groupID,
 		Title: "My Group",
 	})
 	sub := &cobra.Command{
 		Use:     "sub [command] [flags] [args]",
 		Aliases: []string{"subcommand", "s"},
 		Short:   "An example subcommand",
-		GroupID: "group1",
+		GroupID: groupID,
 		Example: `example sub some arguments --and-flags
 example sub another --thing`,
 		Run: func(c *cobra.Command, _ []string) {
@@ -136,7 +136,7 @@ example s another --thing
 	cmd.AddCommand(&cobra.Command{
 		Use:     "throw",
 		Short:   "Throws an error",
-		GroupID: "group1",
+		GroupID: groupID,
 		RunE: func(*cobra.Command, []string) error {
 			return errors.New("a super long error string that is meant to test the error handling in fang. It should be long enough to wrap around and test the error styling and formatting capabilities of fang. This is a test to see how well fang handles long error messages and whether it can display them properly without breaking the layout or causing any issues")
 		},
@@ -151,3 +151,5 @@ example s another --thing
 		os.Exit(1)
 	}
 }
+
+const groupID = "group1"
