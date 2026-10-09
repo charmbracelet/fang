@@ -25,14 +25,15 @@ type ErrorHandler = func(w io.Writer, styles Styles, err error)
 type ColorSchemeFunc = func(lipgloss.LightDarkFunc) ColorScheme
 
 type settings struct {
-	completions bool
-	manpages    bool
-	skipVersion bool
-	version     string
-	commit      string
-	colorscheme ColorSchemeFunc
-	errHandler  ErrorHandler
-	signals     []os.Signal
+	completions  bool
+	manpages     bool
+	skipVersion  bool
+	version      string
+	commit       string
+	colorscheme  ColorSchemeFunc
+	errHandler   ErrorHandler
+	signals      []os.Signal
+	longRenderer func(string) string
 }
 
 // Option changes fang settings.
@@ -91,6 +92,18 @@ func WithCommit(commit string) Option {
 	}
 }
 
+// WithLongRenderer sets a function that renders a command's long (or short)
+// help text before it is displayed. Use it to, for example, render Markdown
+// through [glamour]. The renderer receives the raw text and returns the string
+// to display; a nil renderer leaves the text unchanged.
+//
+// [glamour]: https://github.com/charmbracelet/glamour
+func WithLongRenderer(render func(string) string) Option {
+	return func(s *settings) {
+		s.longRenderer = render
+	}
+}
+
 // WithErrorHandler sets the error handler.
 func WithErrorHandler(handler ErrorHandler) Option {
 	return func(s *settings) {
@@ -129,7 +142,7 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 
 	helpFunc := func(c *cobra.Command, _ []string) {
 		w := colorprofile.NewWriter(c.OutOrStdout(), os.Environ())
-		helpFn(c, w, makeStyles(mustColorscheme(opts.colorscheme)))
+		helpFn(c, w, makeStyles(mustColorscheme(opts.colorscheme)), opts.longRenderer)
 	}
 
 	root.SilenceUsage = true

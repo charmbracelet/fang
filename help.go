@@ -39,8 +39,8 @@ var width = sync.OnceValue(func() int {
 	return min(w, 120)
 })
 
-func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles) {
-	writeLongShort(w, styles, cmp.Or(c.Long, c.Short))
+func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles, render func(string) string) {
+	writeLongShort(w, styles, render, cmp.Or(c.Long, c.Short))
 	usage := styleUsage(c, styles.Codeblock.Program, true)
 	examples := styleExamples(c, styles)
 
@@ -149,9 +149,12 @@ func isUsageError(err error) bool {
 	return false
 }
 
-func writeLongShort(w *colorprofile.Writer, styles Styles, longShort string) {
+func writeLongShort(w *colorprofile.Writer, styles Styles, render func(string) string, longShort string) {
 	if longShort == "" {
 		return
+	}
+	if render != nil {
+		longShort = render(longShort)
 	}
 	_, _ = fmt.Fprintln(w)
 	_, _ = fmt.Fprintln(w, styles.Text.Width(width()).PaddingLeft(shortPad).Render(longShort))
