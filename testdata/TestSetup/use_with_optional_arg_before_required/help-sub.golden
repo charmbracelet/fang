@@ -1,0 +1,12 @@
+
+  a sub command                              
+         
+  USAGE  
+         
+    simple update [<id> | <branch>]        
+    <note-id> [--flags]                    
+         
+  FLAGS  
+         
+    -h --help  Help for update
+

@@ -7,7 +7,6 @@ import (
 	"iter"
 	"os"
 	"reflect"
-	"regexp"
 	"slices"
 	"strconv"
 	"strings"
@@ -157,8 +156,6 @@ func writeLongShort(w *colorprofile.Writer, styles Styles, longShort string) {
 	_, _ = fmt.Fprintln(w, styles.Text.Width(width()).PaddingLeft(shortPad).Render(longShort))
 }
 
-var otherArgsRe = regexp.MustCompile(`(\[.*\])`)
-
 // styleUsage stylized styleUsage line for a given command.
 func styleUsage(c *cobra.Command, styles Program, complete bool) string {
 	u := c.Use
@@ -176,23 +173,21 @@ func styleUsage(c *cobra.Command, styles Program, complete bool) string {
 		u = strings.ReplaceAll(u, k, "")
 	}
 
-	var otherArgs []string //nolint:prealloc
-	for _, arg := range otherArgsRe.FindAllString(u, -1) {
-		u = strings.ReplaceAll(u, arg, "")
-		otherArgs = append(otherArgs, arg)
+	words := usageWords(u)
+	pathLen := slices.IndexFunc(words, isBracketed)
+	if pathLen < 0 {
+		pathLen = len(words)
 	}
-
-	u = strings.TrimSpace(u)
+	path, otherArgs := words[:pathLen], words[pathLen:]
 
 	useLine := []string{}
 	if complete {
-		parts := strings.Fields(u)
-		useLine = append(useLine, styles.Name.Render(parts[0]))
-		if len(parts) > 1 {
-			useLine = append(useLine, styles.Command.Render(" "+strings.Join(parts[1:], " ")))
+		useLine = append(useLine, styles.Name.Render(path[0]))
+		if len(path) > 1 {
+			useLine = append(useLine, styles.Command.Render(" "+strings.Join(path[1:], " ")))
 		}
 	} else {
-		useLine = append(useLine, styles.Command.Render(u))
+		useLine = append(useLine, styles.Command.Render(strings.Join(path, " ")))
 	}
 	if hasCommands {
 		useLine = append(
@@ -207,10 +202,11 @@ func styleUsage(c *cobra.Command, styles Program, complete bool) string {
 		)
 	}
 	for _, arg := range otherArgs {
-		useLine = append(
-			useLine,
-			styles.DimmedArgument.Render(" "+arg),
-		)
+		style := styles.Command
+		if isBracketed(arg) {
+			style = styles.DimmedArgument
+		}
+		useLine = append(useLine, style.Render(" "+arg))
 	}
 	if hasFlags {
 		useLine = append(
@@ -219,6 +215,26 @@ func styleUsage(c *cobra.Command, styles Program, complete bool) string {
 		)
 	}
 	return lipgloss.JoinHorizontal(lipgloss.Left, useLine...)
+}
+
+// usageWords splits a use line into words, keeping each bracketed group,
+// nested or not, as a single word.
+func usageWords(u string) []string {
+	var words []string
+	var depth int
+	for _, f := range strings.Fields(u) {
+		if depth > 0 {
+			words[len(words)-1] += " " + f
+		} else {
+			words = append(words, f)
+		}
+		depth += strings.Count(f, "[") - strings.Count(f, "]")
+	}
+	return words
+}
+
+func isBracketed(word string) bool {
+	return strings.HasPrefix(word, "[")
 }
 
 // styleExamples for a given command.
