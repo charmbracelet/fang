@@ -65,6 +65,10 @@ func main() {
 
 That's all there is to it!
 
+If your application already knows whether the terminal background is dark,
+pass `fang.WithDarkBackground(true)` (or `false` for light) to skip background
+color queries.
+
 ## Contributing
 
 See [contributing][contribute].
