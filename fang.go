@@ -43,15 +43,16 @@ type HelpSectionsFunc = func(c *cobra.Command) []HelpSection
 type ColorSchemeFunc = func(lipgloss.LightDarkFunc) ColorScheme
 
 type settings struct {
-	completions  bool
-	manpages     bool
-	skipVersion  bool
-	version      string
-	commit       string
-	colorscheme  ColorSchemeFunc
-	errHandler   ErrorHandler
-	helpSections HelpSectionsFunc
-	signals      []os.Signal
+	completions    bool
+	manpages       bool
+	skipVersion    bool
+	version        string
+	commit         string
+	colorscheme    ColorSchemeFunc
+	darkBackground *bool
+	errHandler     ErrorHandler
+	helpSections   HelpSectionsFunc
+	signals        []os.Signal
 }
 
 // Option changes fang settings.
@@ -75,6 +76,14 @@ func WithoutManpage() Option {
 func WithColorSchemeFunc(cs ColorSchemeFunc) Option {
 	return func(s *settings) {
 		s.colorscheme = cs
+	}
+}
+
+// WithDarkBackground sets whether the terminal has a dark background, skipping
+// automatic background detection.
+func WithDarkBackground(dark bool) Option {
+	return func(s *settings) {
+		s.darkBackground = &dark
 	}
 }
 
@@ -155,7 +164,7 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 
 	helpFunc := func(c *cobra.Command, _ []string) {
 		w := colorprofile.NewWriter(c.OutOrStdout(), os.Environ())
-		helpFn(c, w, makeStyles(mustColorscheme(opts.colorscheme)), opts.helpSections)
+		helpFn(c, w, makeStyles(mustColorscheme(opts.colorscheme, opts.darkBackground)), opts.helpSections)
 	}
 
 	root.SilenceUsage = true
@@ -198,7 +207,7 @@ func Execute(ctx context.Context, root *cobra.Command, options ...Option) error 
 
 	if err := root.ExecuteContext(ctx); err != nil {
 		w := colorprofile.NewWriter(root.ErrOrStderr(), os.Environ())
-		opts.errHandler(w, makeStyles(mustColorscheme(opts.colorscheme)), err)
+		opts.errHandler(w, makeStyles(mustColorscheme(opts.colorscheme, opts.darkBackground)), err)
 		return err //nolint:wrapcheck
 	}
 	return nil

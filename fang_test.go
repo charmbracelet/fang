@@ -3,14 +3,51 @@ package fang_test
 import (
 	"bytes"
 	"fmt"
+	"image/color"
 	"io"
 	"testing"
 
 	"charm.land/fang/v2"
+	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/x/exp/golden"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/require"
 )
+
+func TestWithDarkBackground(t *testing.T) {
+	t.Setenv("__FANG_TEST_WIDTH", "45")
+	light := lipgloss.Color("#ffffff")
+	dark := lipgloss.Color("#000000")
+	for _, isDark := range []bool{false, true} {
+		for _, args := range [][]string{{"--help"}, {"--unknown"}} {
+			t.Run(fmt.Sprintf("dark=%t/%s", isDark, args[0]), func(t *testing.T) {
+				cmd := &cobra.Command{Use: "example"}
+				cmd.SetArgs(args)
+				cmd.SetOut(io.Discard)
+				cmd.SetErr(io.Discard)
+
+				var selected color.Color
+				err := fang.Execute(t.Context(), cmd,
+					fang.WithDarkBackground(isDark),
+					fang.WithColorSchemeFunc(func(ld lipgloss.LightDarkFunc) fang.ColorScheme {
+						selected = ld(light, dark)
+						return fang.DefaultColorScheme(ld)
+					}),
+				)
+				if args[0] == "--help" {
+					require.NoError(t, err)
+				} else {
+					require.Error(t, err)
+				}
+				if isDark {
+					require.Equal(t, dark, selected)
+				} else {
+					require.Equal(t, light, selected)
+				}
+			})
+		}
+	}
+}
 
 func TestSetup(t *testing.T) {
 	t.Run("simple", func(t *testing.T) {

@@ -113,7 +113,10 @@ type Program struct {
 	QuotedString   lipgloss.Style
 }
 
-func mustColorscheme(cs func(lipgloss.LightDarkFunc) ColorScheme) ColorScheme {
+func mustColorscheme(cs ColorSchemeFunc, darkBackground *bool) ColorScheme {
+	if darkBackground != nil {
+		return cs(lipgloss.LightDark(*darkBackground))
+	}
 	var isDark bool
 	if term.IsTerminal(os.Stdout.Fd()) {
 		isDark = lipgloss.HasDarkBackground(os.Stdin, os.Stdout)
