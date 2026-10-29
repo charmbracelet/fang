@@ -4,6 +4,7 @@ import (
 	"image/color"
 	"os"
 	"strings"
+	"sync"
 	"unicode"
 
 	"charm.land/lipgloss/v2"
@@ -113,12 +114,19 @@ type Program struct {
 	QuotedString   lipgloss.Style
 }
 
+// hasDarkBackground queries the terminal for its background color.
+var hasDarkBackground = func() bool {
+	return term.IsTerminal(os.Stdout.Fd()) && lipgloss.HasDarkBackground(os.Stdin, os.Stdout)
+}
+
+// mustColorscheme resolves the colorscheme. The terminal is queried for its
+// background only when the colorscheme picks a light or dark color, and at
+// most once, so a fixed theme (e.g. [WithTheme]) sends no terminal query.
 func mustColorscheme(cs func(lipgloss.LightDarkFunc) ColorScheme) ColorScheme {
-	var isDark bool
-	if term.IsTerminal(os.Stdout.Fd()) {
-		isDark = lipgloss.HasDarkBackground(os.Stdin, os.Stdout)
-	}
-	return cs(lipgloss.LightDark(isDark))
+	isDark := sync.OnceValue(hasDarkBackground)
+	return cs(func(light, dark color.Color) color.Color {
+		return lipgloss.LightDark(isDark())(light, dark)
+	})
 }
 
 func makeStyles(cs ColorScheme) Styles {

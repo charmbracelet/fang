@@ -3,6 +3,8 @@ package fang
 import (
 	"testing"
 
+	"charm.land/lipgloss/v2"
+	"github.com/charmbracelet/x/exp/charmtone"
 	"github.com/stretchr/testify/require"
 )
 
@@ -128,4 +130,29 @@ func TestTitleFirstWord(t *testing.T) {
 			require.Equal(t, tt.expected, result)
 		})
 	}
+}
+
+func TestMustColorschemeQueriesBackgroundLazily(t *testing.T) {
+	var queries int
+	orig := hasDarkBackground
+	t.Cleanup(func() { hasDarkBackground = orig })
+	hasDarkBackground = func() bool {
+		queries++
+		return true
+	}
+
+	t.Run("fixed scheme sends no query", func(t *testing.T) {
+		queries = 0
+		mustColorscheme(func(lipgloss.LightDarkFunc) ColorScheme {
+			return ColorScheme{Base: charmtone.Ash}
+		})
+		require.Equal(t, 0, queries)
+	})
+
+	t.Run("adaptive scheme queries once", func(t *testing.T) {
+		queries = 0
+		cs := mustColorscheme(DefaultColorScheme)
+		require.Equal(t, 1, queries)
+		require.Equal(t, DefaultColorScheme(lipgloss.LightDark(true)), cs)
+	})
 }
