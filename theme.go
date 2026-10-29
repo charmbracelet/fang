@@ -7,7 +7,7 @@ import (
 	"unicode"
 
 	"charm.land/lipgloss/v2"
-	"github.com/charmbracelet/x/exp/charmtone"
+	charmtone "charm.land/tone"
 	"github.com/charmbracelet/x/term"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -43,7 +43,7 @@ func DefaultTheme(isDark bool) ColorScheme {
 // DefaultColorScheme is the default colorscheme.
 func DefaultColorScheme(c lipgloss.LightDarkFunc) ColorScheme {
 	return ColorScheme{
-		Base:           c(charmtone.Charcoal, charmtone.Ash),
+		Base:           c(charmtone.Char, charmtone.Sash),
 		Title:          charmtone.Charple,
 		Codeblock:      c(charmtone.Salt, lipgloss.Color("#2F2E36")),
 		Program:        c(charmtone.Malibu, charmtone.Guppy),
@@ -51,9 +51,9 @@ func DefaultColorScheme(c lipgloss.LightDarkFunc) ColorScheme {
 		DimmedArgument: c(charmtone.Squid, charmtone.Oyster),
 		Comment:        c(charmtone.Squid, lipgloss.Color("#747282")),
 		Flag:           c(lipgloss.Color("#0CB37F"), charmtone.Guac),
-		Argument:       c(charmtone.Charcoal, charmtone.Ash),
-		Description:    c(charmtone.Charcoal, charmtone.Ash), // flag and command descriptions
-		FlagDefault:    c(charmtone.Smoke, charmtone.Squid),  // flag default values in descriptions
+		Argument:       c(charmtone.Char, charmtone.Sash),
+		Description:    c(charmtone.Char, charmtone.Sash),   // flag and command descriptions
+		FlagDefault:    c(charmtone.Smoke, charmtone.Squid), // flag default values in descriptions
 		QuotedString:   c(charmtone.Coral, charmtone.Salmon),
 		ErrorHeader: [2]color.Color{
 			charmtone.Butter,

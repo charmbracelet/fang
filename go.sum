@@ -1,5 +1,7 @@
 charm.land/lipgloss/v2 v2.0.1 h1:6Xzrn49+Py1Um5q/wZG1gWgER2+7dUyZ9XMEufqPSys=
 charm.land/lipgloss/v2 v2.0.1/go.mod h1:KjPle2Qd3YmvP1KL5OMHiHysGcNwq6u83MUjYkFvEkM=
+charm.land/tone v0.1.0 h1:Zkt+57z72FFgEq03KcD44vkoP0nx/p9ZTKFNGcN94eQ=
+charm.land/tone v0.1.0/go.mod h1:NkPXXPADDO9RdGtE2eBtkeGYrjP8sH25PP8JeKUvyiI=
 github.com/aymanbagabas/go-udiff v0.4.1 h1:OEIrQ8maEeDBXQDoGCbbTTXYJMYRCRO1fnodZ12Gv5o=
 github.com/aymanbagabas/go-udiff v0.4.1/go.mod h1:0L9PGwj20lrtmEMeyw4WKJ/TMyDtvAoK9bf2u/mNo3w=
 github.com/charmbracelet/colorprofile v0.4.2 h1:BdSNuMjRbotnxHSfxy+PCSa4xAmz7szw70ktAtWRYrY=
@@ -8,8 +10,6 @@ github.com/charmbracelet/ultraviolet v0.0.0-20260205113103-524a6607adb8 h1:eyFRb
 github.com/charmbracelet/ultraviolet v0.0.0-20260205113103-524a6607adb8/go.mod h1:SQpCTRNBtzJkwku5ye4S3HEuthAlGy2n9VXZnWkEW98=
 github.com/charmbracelet/x/ansi v0.11.6 h1:GhV21SiDz/45W9AnV2R61xZMRri5NlLnl6CVF7ihZW8=
 github.com/charmbracelet/x/ansi v0.11.6/go.mod h1:2JNYLgQUsyqaiLovhU2Rv/pb8r6ydXKS3NIttu3VGZQ=
-github.com/charmbracelet/x/exp/charmtone v0.0.0-20250603201427-c31516f43444 h1:IJDiTgVE56gkAGfq0lBEloWgkXMk4hl/bmuPoicI4R0=
-github.com/charmbracelet/x/exp/charmtone v0.0.0-20250603201427-c31516f43444/go.mod h1:T9jr8CzFpjhFVHjNjKwbAD7KwBNyFnj2pntAO7F2zw0=
 github.com/charmbracelet/x/exp/golden v0.0.0-20250806222409-83e3a29d542f h1:pk6gmGpCE7F3FcjaOEKYriCvpmIN4+6OS/RD0vm4uIA=
 github.com/charmbracelet/x/exp/golden v0.0.0-20250806222409-83e3a29d542f/go.mod h1:IfZAMTHB6XkZSeXUqriemErjAWCCzT0LwjKFYCZyw0I=
 github.com/charmbracelet/x/term v0.2.2 h1:xVRT/S2ZcKdhhOuSP4t5cLi5o+JxklsoEObBSgfgZRk=
