@@ -1,0 +1,29 @@
+
+  Commands and reference documentation       
+         
+  USAGE  
+         
+    topics [command] [--flags]  
+            
+  COMMANDS  
+            
+    completion [command]  Generate the autocompletion script for the specified shell
+    help [command]        Help about any command
+    remote [command]      Manage remotes
+    run                   Run the application
+                 
+  WORK COMMANDS  
+                 
+    work                  Run a task
+         
+  FLAGS  
+         
+    -h --help             Help for topics
+    -v --version          Version for topics
+                          
+  ADDITIONAL HELP TOPICS  
+                          
+    formats               Supported formats
+    guide                 Read the guide
+    reference             Reference topics
+

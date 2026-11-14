@@ -73,6 +73,7 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles, sectionsFn 
 
 	groups, groupKeys := evalGroups(c)
 	cmds, cmdKeys := evalCmds(c, styles)
+	topics, topicKeys := evalHelpTopics(c, styles)
 	flags, flagKeys := evalFlags(c, styles)
 
 	var sections []HelpSection
@@ -85,7 +86,7 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles, sectionsFn 
 			sectionKeys[i] = append(sectionKeys[i], styles.Program.Flag.Render(item.Name))
 		}
 	}
-	space := calculateSpace(append([][]string{cmdKeys, flagKeys}, sectionKeys...)...)
+	space := calculateSpace(append([][]string{cmdKeys, topicKeys, flagKeys}, sectionKeys...)...)
 
 	for _, groupID := range groupKeys {
 		group := cmds[groupID]
@@ -109,6 +110,16 @@ func helpFn(c *cobra.Command, w *colorprofile.Writer, styles Styles, sectionsFn 
 		renderGroup(w, styles, space, "flags", func(yield func(string, string) bool) {
 			for _, k := range flagKeys {
 				if !yield(k, flags[k]) {
+					return
+				}
+			}
+		})
+	}
+
+	if len(topics) > 0 {
+		renderGroup(w, styles, space, "additional help topics", func(yield func(string, string) bool) {
+			for _, k := range topicKeys {
+				if !yield(k, topics[k]) {
 					return
 				}
 			}
@@ -449,7 +460,7 @@ func evalCmds(c *cobra.Command, styles Styles) (map[string](map[string]string), 
 	keys := []string{}
 	cmds := map[string]map[string]string{}
 	for _, sc := range c.Commands() {
-		if sc.Hidden {
+		if sc.Hidden || sc.IsAdditionalHelpTopicCommand() {
 			continue
 		}
 		if _, ok := cmds[sc.GroupID]; !ok {
@@ -461,6 +472,20 @@ func evalCmds(c *cobra.Command, styles Styles) (map[string](map[string]string), 
 		keys = append(keys, key)
 	}
 	return cmds, keys
+}
+
+func evalHelpTopics(c *cobra.Command, styles Styles) (map[string]string, []string) {
+	topics := map[string]string{}
+	keys := []string{}
+	for _, sc := range c.Commands() {
+		if !sc.IsAdditionalHelpTopicCommand() {
+			continue
+		}
+		key := styleUsage(sc, styles.Program, false)
+		topics[key] = styles.FlagDescription.Render(sc.Short)
+		keys = append(keys, key)
+	}
+	return topics, keys
 }
 
 func evalGroups(c *cobra.Command) (map[string]string, []string) {
