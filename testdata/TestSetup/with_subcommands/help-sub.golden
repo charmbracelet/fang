@@ -8,12 +8,12 @@
   EXAMPLES  
             
     simple sub1 some args  
-            
-  COMMANDS  
-            
-    sub2 [args]  Yet another sub command
          
   FLAGS  
          
     -h --help    Help for sub1
+                          
+  ADDITIONAL HELP TOPICS  
+                          
+    sub2 [args]  Yet another sub command
 

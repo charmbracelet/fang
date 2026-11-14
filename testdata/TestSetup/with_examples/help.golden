@@ -51,7 +51,6 @@
             
     completion [command]  Generate the autocompletion script for the specified shell
     help [command]        Help about any command
-    sub                   A sub command
          
   FLAGS  
          
@@ -60,4 +59,8 @@
     --name                The name
     -s --surname          The surname
     -v --version          Version for example
+                          
+  ADDITIONAL HELP TOPICS  
+                          
+    sub                   A sub command
 
