@@ -65,6 +65,12 @@ func main() {
 
 That's all there is to it!
 
+If your application already knows its background preference or must not query
+terminal input, pass `fang.WithDarkBackground(true)` for a dark background or
+`fang.WithDarkBackground(false)` for a light background. This applies to help
+and errors, including custom color schemes. Omitting the option preserves
+Fang's automatic terminal background detection.
+
 ## Contributing
 
 See [contributing][contribute].
