@@ -2,11 +2,13 @@ package fang_test
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"testing"
 
 	"charm.land/fang/v2"
+	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/x/exp/golden"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/require"
@@ -388,4 +390,55 @@ func assertNoError(t *testing.T, err error, stdout, stderr bytes.Buffer) {
 func assertError(t *testing.T, err error, stdout, stderr bytes.Buffer) {
 	require.Error(t, err, stdout.String())
 	golden.RequireEqual(t, stderr.Bytes())
+}
+
+func TestExplicitDarkBackground(t *testing.T) {
+	for _, dark := range []bool{false, true} {
+		name := "light"
+		if dark {
+			name = "dark"
+		}
+		t.Run(name, func(t *testing.T) {
+			for _, failure := range []bool{false, true} {
+				mode, args := "help", []string{"--help"}
+				if failure {
+					mode, args = "error", []string{}
+				}
+				t.Run(mode, func(t *testing.T) {
+					wanted := errors.New("device unavailable")
+					calls, handled := 0, false
+					doExercise(t,
+						func() *cobra.Command {
+							return &cobra.Command{Use: "example", RunE: func(*cobra.Command, []string) error { return wanted }}
+						}, args,
+						func(t *testing.T, err error, stdout, _ bytes.Buffer) {
+							require.Equal(t, 1, calls)
+							require.Equal(t, failure, handled)
+							if failure {
+								require.ErrorIs(t, err, wanted)
+							} else {
+								require.NoError(t, err)
+								require.Contains(t, stdout.String(), "USAGE")
+							}
+						},
+						fang.WithoutVersion(), fang.WithoutManpage(), fang.WithoutCompletions(), fang.WithDarkBackground(dark),
+						fang.WithColorSchemeFunc(func(lightDark lipgloss.LightDarkFunc) fang.ColorScheme {
+							calls++
+							light, darkColor := lipgloss.Color("#ffffff"), lipgloss.Color("#000000")
+							expected := light
+							if dark {
+								expected = darkColor
+							}
+							require.Equal(t, expected, lightDark(light, darkColor))
+							return fang.DefaultColorScheme(lightDark)
+						}),
+						fang.WithErrorHandler(func(_ io.Writer, _ fang.Styles, err error) {
+							handled = true
+							require.ErrorIs(t, err, wanted)
+						}),
+					)
+				})
+			}
+		})
+	}
 }
