@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"strings"
 	"testing"
 
 	"charm.land/fang/v2"
+	"github.com/charmbracelet/x/ansi"
 	"github.com/charmbracelet/x/exp/golden"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/require"
@@ -388,4 +390,19 @@ func assertNoError(t *testing.T, err error, stdout, stderr bytes.Buffer) {
 func assertError(t *testing.T, err error, stdout, stderr bytes.Buffer) {
 	require.Error(t, err, stdout.String())
 	golden.RequireEqual(t, stderr.Bytes())
+}
+
+func TestHelpPreservesOptionalArgumentOrder(t *testing.T) {
+	doExercise(t, func() *cobra.Command {
+		root := &cobra.Command{Use: "tool"}
+		control := &cobra.Command{Use: "control"}
+		control.AddCommand(&cobra.Command{Use: "run [SERIAL] FILE", Run: func(*cobra.Command, []string) {}})
+		root.AddCommand(control)
+		return root
+	}, []string{"control", "run", "--help"}, func(t *testing.T, err error, stdout, stderr bytes.Buffer) {
+		require.NoError(t, err, stderr.String())
+		visible := strings.Join(strings.Fields(ansi.Strip(stdout.String())), " ")
+		require.Contains(t, visible, "tool control run [SERIAL] FILE")
+		require.NotContains(t, visible, "tool control run FILE [SERIAL]")
+	})
 }
