@@ -188,7 +188,7 @@ func writeLongShort(w *colorprofile.Writer, styles Styles, longShort string) {
 	_, _ = fmt.Fprintln(w, styles.Text.Width(width()).PaddingLeft(shortPad).Render(longShort))
 }
 
-var otherArgsRe = regexp.MustCompile(`(\[.*\])`)
+var otherArgsRe = regexp.MustCompile(`[ \t]*\[[^\[\]]*\]`)
 
 // styleUsage stylized styleUsage line for a given command.
 func styleUsage(c *cobra.Command, styles Program, complete bool) string {
@@ -207,23 +207,27 @@ func styleUsage(c *cobra.Command, styles Program, complete bool) string {
 		u = strings.ReplaceAll(u, k, "")
 	}
 
-	var otherArgs []string //nolint:prealloc
-	for _, arg := range otherArgsRe.FindAllString(u, -1) {
-		u = strings.ReplaceAll(u, arg, "")
-		otherArgs = append(otherArgs, arg)
-	}
-
 	u = strings.TrimSpace(u)
 
 	useLine := []string{}
 	if complete {
 		parts := strings.Fields(u)
 		useLine = append(useLine, styles.Name.Render(parts[0]))
+		u = ""
 		if len(parts) > 1 {
-			useLine = append(useLine, styles.Command.Render(" "+strings.Join(parts[1:], " ")))
+			u = " " + strings.Join(parts[1:], " ")
 		}
-	} else {
-		useLine = append(useLine, styles.Command.Render(u))
+	}
+
+	// Keep custom optional arguments in their declared positions. Extracting
+	// them and appending them at the end changes positional argument order.
+	args := otherArgsRe.FindAllStringIndex(u, -1)
+	prefixEnd := len(u)
+	if len(args) > 0 {
+		prefixEnd = args[0][0]
+	}
+	if prefixEnd > 0 {
+		useLine = append(useLine, styles.Command.Render(u[:prefixEnd]))
 	}
 	if hasCommands {
 		useLine = append(
@@ -237,11 +241,16 @@ func styleUsage(c *cobra.Command, styles Program, complete bool) string {
 			styles.DimmedArgument.Render(" [args]"),
 		)
 	}
-	for _, arg := range otherArgs {
-		useLine = append(
-			useLine,
-			styles.DimmedArgument.Render(" "+arg),
-		)
+	end := prefixEnd
+	for _, arg := range args {
+		if arg[0] > end {
+			useLine = append(useLine, styles.Command.Render(u[end:arg[0]]))
+		}
+		useLine = append(useLine, styles.DimmedArgument.Render(" "+strings.TrimSpace(u[arg[0]:arg[1]])))
+		end = arg[1]
+	}
+	if end < len(u) {
+		useLine = append(useLine, styles.Command.Render(u[end:]))
 	}
 	if hasFlags {
 		useLine = append(
